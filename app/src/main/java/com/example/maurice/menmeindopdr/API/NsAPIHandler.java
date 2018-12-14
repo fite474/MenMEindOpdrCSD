@@ -33,7 +33,7 @@ public class NsAPIHandler  implements Serializable {
     }
 
 
-//    public void HandleAPICall(CallType type, @Nullable String lightID, @Nullable JSONObject body)
+//    public void HandleAPICall(NSAPICallType type, @Nullable String lightID, @Nullable JSONObject body)
 //    {
 //        switch(type)
 //        {
