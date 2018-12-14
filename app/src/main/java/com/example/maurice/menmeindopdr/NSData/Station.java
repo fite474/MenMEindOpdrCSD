@@ -1,5 +1,7 @@
 package com.example.maurice.menmeindopdr.NSData;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Station
 {
     private String code;
@@ -9,7 +11,7 @@ public class Station
     private int uicCode;
     private double latitude;
     private double longitude;
-    //private LatLng coordinate;
+    private LatLng coordinate;
 
     public Station(String code, StationType type, String[] namen, String country, int uicCode, double latitude, double longitude)
     {
