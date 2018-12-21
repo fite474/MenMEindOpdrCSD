@@ -33,27 +33,25 @@ public class NsAPIHandler  implements Serializable {
     }
 
 
-//    public void HandleAPICall(NSAPICallType type, @Nullable String lightID, @Nullable JSONObject body)
-//    {
-//        switch(type)
-//        {
-////            case GET_ALL_LIGHTS:
-////                getAllLights();
-////                break;
-////            case SET_ALL_LIGHTS:
-////                setAllLights(body);
-////                break;
-////            case GET_SINGLE_LIGHT:
-////
-////                getSingleLight(lightID);
-////                break;
-////            case SET_SINGLE_LIGHT:
-////                setSingleLight(lightID, body);
-////                break;
-//            default:break;
-//        }
-//    }
-//
+    public void HandleAPICall(NSAPICallType type, @Nullable String lightID, @Nullable JSONObject body)
+    {
+        switch(type)
+        {
+            case FROM_TO_REQUEST:
+                //getAllLights();
+                break;
+            case FIND_NEARBY_STATION:
+                //setAllLights(body);
+                break;
+            case FIND_TRAIN:
+
+                //getSingleLight(lightID);
+                break;
+
+            default:break;
+        }
+    }
+
 //    private void getSingleLight(String lightID)
 //    {
 //

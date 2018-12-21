@@ -179,25 +179,26 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
         getLocationPermission();
 
-        LatLng[] latLngsArray = new LatLng[]{
-                new LatLng(51.551859, 4.698705),
-                new LatLng(51.556769, 4.843869),
-                new LatLng(51.622466, 4.843183),
-                new LatLng(51.634188, 4.765637),
-                new LatLng(51.620122, 4.688058),
-                new LatLng(51.551859, 4.698705)
-        };
-
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//        LatLng[] latLngsArray = new LatLng[]{
+//                new LatLng(51.551859, 4.698705),
+//                new LatLng(51.556769, 4.843869),
+//                new LatLng(51.622466, 4.843183),
+//                new LatLng(51.634188, 4.765637),
+//                new LatLng(51.620122, 4.688058),
+//                new LatLng(51.551859, 4.698705)
+//        };
+//
+//        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//        PolylineOptions polylineOptions = new PolylineOptions();
+//        for (LatLng latLng : latLngsArray) {
+//            builder.include(latLng);
+//            polylineOptions.add(latLng);
+//        }
+//        LatLngBounds bounds = builder.build();
         PolylineOptions polylineOptions = new PolylineOptions();
-        for (LatLng latLng : latLngsArray) {
-            builder.include(latLng);
-            polylineOptions.add(latLng);
-        }
-        LatLngBounds bounds = builder.build();
 
         map.addPolyline(polylineOptions);
-        map.setLatLngBoundsForCameraTarget(bounds);
+       // map.setLatLngBoundsForCameraTarget(bounds);
         map.setIndoorEnabled(false);
         map.getUiSettings().setZoomControlsEnabled(true);
         map.setMinZoomPreference(13);

@@ -1,8 +1,10 @@
 package com.example.maurice.menmeindopdr.NSData;
 
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 
-public class Station
+public abstract class Station implements Parcelable
 {
     private String code;
     private StationType type;

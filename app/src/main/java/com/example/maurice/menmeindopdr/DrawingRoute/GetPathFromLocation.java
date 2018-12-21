@@ -23,7 +23,7 @@ import java.util.List;
 public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions> {
 
     private String TAG = "GetPathFromLocation";
-    private String API_KEY = "6ccec2eb-c1e2-4873-85bc-6c12cd5b1919";
+    private String API_KEY = "a4a31a0f-43a6-4e33-b743-49b556907849";
     private LatLng source, destination;
     private DirectionPointListener resultCallback;
    // private List<PointOfInterest> wayPoints;
