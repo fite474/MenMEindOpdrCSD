@@ -1,7 +1,10 @@
 package com.example.maurice.menmeindopdr.Fragments;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -12,6 +15,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -38,10 +43,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -49,52 +56,53 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  *  NOTE: GEBRUIK NIET DE VARIABLE map BUITEN DE onMapReady, gebruik bijvoorbeeld de addPolyline of de addMarker methode.
  */
-public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener {
+public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback, android.location.LocationListener {
 
     private final static String TAG = MapsFragment.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GoogleMap map;
+
     private boolean locationPermissionGranted;
     private Queue<Runnable> runnables;
 
+
     private FusedLocationProviderClient mFuseLocationProviderClient;
+    private static final float DEFAULT_ZOOM = 15;
     private Location previousLocation;
-    private LocationManager mLocationManager;
-
-
-    List<Station> stations;
-
+    Polyline line;
     LatLng src;
     LatLng dest;
-    //private MapsViewModel model;
+
     private int routeSelected;
 
-    List<LatLng> waypoints;
-
+    private LocationManager mLocationManager;
+    private ArrayList<Marker> mapMarkers;
+    private static final long LOCATION_INTERVAL = 700;
+    private static final float LOCATION_DISTANCE = 1;
     GetPathFromLocation getPathFromLocation;
+
+    List<LatLng> toFollowRoute;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         runnables = new LinkedBlockingQueue<>();
 
+
+
         if (getArguments() != null) {
-        //    routeSelected = getArguments().getInt(MapsActivity.SELECTED_ROUTE_BUNDLE_TAG);
+            routeSelected = getArguments().getInt(MapsActivity.SELECTED_ROUTE_BUNDLE_TAG);
         }
 
         getMapAsync(this);
 
-//        model = ViewModelProviders.of(this).get(MapsViewModel.class);
-//        switch(routeSelected){
-//            case SelectedRoute.BLIND_WALLS:
-//                model.getPointOfInterests(routeSelected).observe(this, this::addBlindWallsToMap);
-//                break;
-//
-//            case SelectedRoute.HISTORIC_KM:
-//                model.getPointOfInterests(routeSelected).observe(this, this::addHistoricsToMap);
-//                break;
-//
-//        }
+
+
+        mapMarkers = new ArrayList<>();
+        toFollowRoute = new ArrayList<>();
     }
+
+
 
     public void addMarker(final MarkerOptions marker){
         if(map == null){
@@ -120,51 +128,26 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         map.addMarker(marker).setTag(tag);
     }
 
-    public void addPolyLine(final PolylineOptions polyLine) {
+    public void addPolyLine(final PolylineOptions polyLine, boolean isUser) {
         if (map == null) {
-            runnables.add(() -> addPolyLineInternal(polyLine));
+            runnables.add(() -> addPolyLineInternal(polyLine, isUser));
         } else {
-            addPolyLineInternal(polyLine);
+            addPolyLineInternal(polyLine, isUser);
         }
     }
 
-    private void addPolyLineInternal(final PolylineOptions polyLine) {
+    private void addPolyLineInternal(final PolylineOptions polyLine, boolean isUser) {
         Polyline line = map.addPolyline(polyLine);
+        if (!isUser)
+            toFollowRoute.addAll(line.getPoints());
     }
 
-    public void addHistoricsToMap(List<Station> monuments){
-//        for(PointOfInterest poi : monuments){
-//            if(monuments.get(0) instanceof HistoricMonument) {
-//                HistoricMonument monument = (HistoricMonument) poi;
-//                if (!monument.getName().equals("")) {
-//                    addMarker(new MarkerOptions()
-//                                    .position(new LatLng(monument.getLatitude(), monument.getLongitude()))
-//                                    .title(monument.getName())
-//                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)),
-//                            monument.getId());
-//                }
-//            }
-//        }
-        //drawLinesToMap(monuments);
-    }
 
-    public void addBlindWallsToMap(List<Station> blindWalls){
 
-//
-//        if(blindWalls.get(0) instanceof BlindWall) {
-//            for (PointOfInterest blindWallPoi : blindWalls) {
-//                BlindWall blindWall = (BlindWall) blindWallPoi;
-//                addMarker(new MarkerOptions()
-//                                .position(new LatLng(blindWall.getLatitude(), blindWall.getLongitude()))
-//                                .title(blindWall.getAuthor())
-//                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)),
-//                        blindWall.getId());
-//            }
-//        }
-//        drawLinesToMap(blindWalls);
-    }
 
-    public void drawLinesToMap(LatLng endDestination){
+
+
+    public void drawLinesToMap(LatLng currentLocation, LatLng targetStation){//List<PointOfInterest> pointOfInterests){
         mFuseLocationProviderClient = LocationServices.getFusedLocationProviderClient(App.getContext());
         try {
             if(locationPermissionGranted) {
@@ -177,15 +160,21 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                             Location currentLocation = (Location) task.getResult();
 
 
-                            //startTrackingUser();
+                            startTrackingUser();
                             try {
 
-                                new GetPathFromLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                                        endDestination,//new LatLng(1,1),//partialList.get(partialList.size() - 1).getLatitude(), partialList.get(partialList.size() - 1).getLongitude()),
 
-                                        polyLine -> {
-                                            addPolyLine(polyLine);
-                                        }).execute();
+                                int targetSize = 21;
+
+
+
+
+                                        new GetPathFromLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), targetStation,
+                                                polyLine -> {
+                                                    addPolyLine(polyLine, false);
+                                                }).execute();
+
+
 
 
 
@@ -201,12 +190,16 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
             }
         }catch (SecurityException e){
             Log.e(TAG, "SecurityException");
+
         }
         catch (Exception ex){
             Log.e(TAG, "getDeviceLocation: "+ ex.toString());
-        }
-    }
 
+        }
+
+        //startTrackingUser();
+
+    }
 
     private void startTrackingUser() {
         if (mLocationManager == null) {
@@ -214,7 +207,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         }
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, 700, 1,
+                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
                     this);
         } catch (java.lang.SecurityException ex) {
             Log.e(TAG, "fail to request location update, ignore", ex);
@@ -226,22 +219,28 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         Log.d(TAG, "onMapReady: ");
-        try {
-            boolean success = true;//googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(App.getContext(), R.raw.map_style_json));
-            if (!success) {
-                Log.e("STYLE_ERROR", "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e("STYLE_ERROR", "Can't find style. Error: ", e);
-        }
+//        try {
+//            boolean success = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(App.getContext(), R.raw.map_style_json));
+//            if (!success) {
+//                Log.e("STYLE_ERROR", "Style parsing failed.");
+//            }
+//        } catch (Resources.NotFoundException e) {
+//            Log.e("STYLE_ERROR", "Can't find style. Error: ", e);
+//        }
 
         this.map = googleMap;
-        map.setOnMarkerClickListener(this);
+        //map.setOnMarkerClickListener(this);
+//        map.setOnInfoWindowClickListener(this);
+//        map.setInfoWindowAdapter(new CustomInfoWindow(getActivity()));
+
+        setMarkers();
 
         getLocationPermission();
+        getDeviceLocation();
 
-//        LatLng[] latLngsArray = new LatLng[]{
+//        LatLng[] boundsLatLngArray = new LatLng[]{
 //                new LatLng(51.551859, 4.698705),
 //                new LatLng(51.556769, 4.843869),
 //                new LatLng(51.622466, 4.843183),
@@ -251,16 +250,10 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 //        };
 //
 //        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//        PolylineOptions polylineOptions = new PolylineOptions();
-//        for (LatLng latLng : latLngsArray) {
-//            builder.include(latLng);
-//            polylineOptions.add(latLng);
-//        }
+//        for (LatLng latLng : boundsLatLngArray) builder.include(latLng);
 //        LatLngBounds bounds = builder.build();
-        PolylineOptions polylineOptions = new PolylineOptions();
 
-        map.addPolyline(polylineOptions);
-       // map.setLatLngBoundsForCameraTarget(bounds);
+        //map.setLatLngBoundsForCameraTarget(bounds);
         map.setIndoorEnabled(false);
         map.getUiSettings().setZoomControlsEnabled(true);
         map.setMinZoomPreference(13);
@@ -272,22 +265,35 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         }
     }
 
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-//        PointOfInterest clickedPoi = model.getPointOfInterests(routeSelected).getValue().get((int) marker.getTag()-1);
+    private void setMarkers() {
+        Log.d(TAG, "setMarkers: " + routeSelected);
+//        switch(routeSelected){
+//            case SelectedRoute.BLIND_WALLS:
+//                model.getPointOfInterests(routeSelected).observe(this, pointOfInterests -> {
+//                    if(pointOfInterests != null && !pointOfInterests.isEmpty()) {
+//                        addBlindWallsToMap(pointOfInterests);
+//                        this.pointsOfInterest = pointOfInterests;
+//                        Log.d(TAG, "setMarkers: " + pointOfInterests);
+//                        drawLinesToMap(pointOfInterests);
+//                    }
+//                });
+//                break;
 //
-//        if (clickedPoi != null) {
-//            Intent intent = new Intent(
-//                    App.getContext(),
-//                    DetailedActivity.class
-//            );
-//            intent.putExtra("selected_route", routeSelected);
-//            intent.putExtra("clicked_poi", clickedPoi);
-//            startActivity(intent);
-//        }
-
-        return false;
+//            case SelectedRoute.HISTORIC_KM:
+//                model.getPointOfInterests(routeSelected).observe(this, pointOfInterests -> {
+//                    if(pointOfInterests != null && !pointOfInterests.isEmpty()){
+//                        addHistoricsToMap(pointOfInterests);
+//                        this.pointsOfInterest = pointOfInterests;
+//                        Log.d(TAG, "setMarkers: " + pointOfInterests);
+//                        drawLinesToMap(pointOfInterests);
+//                    }
+//                });
+//                break;
+        //}
     }
+
+
+
 
     private void getLocationPermission() {
         Log.d(TAG, "getLocationPermission: ");
@@ -314,7 +320,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 map.setMyLocationEnabled(true);
                 map.getUiSettings().setMyLocationButtonEnabled(true);
                 map.getUiSettings().setCompassEnabled(true);
+
                 zoomToCurrentLocation();
+
             } else {
                 map.setMyLocationEnabled(false);
                 map.getUiSettings().setMyLocationButtonEnabled(false);
@@ -325,83 +333,76 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         }
     }
 
+    private void getDeviceLocation(){
+        Log.d(TAG, "getDeviceLocation:");
+
+        mFuseLocationProviderClient = LocationServices.getFusedLocationProviderClient(App.getContext());
+
+        try {
+            if(locationPermissionGranted) {
+                Task location = mFuseLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            try {
+                                Log.d(TAG, "onComplete: ");
+                                Location currentLocation = (Location) task.getResult();
+                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                            }
+                            catch(Exception e){
+//                                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getContext());
+//                                dlgAlert.setMessage("Please turn on GPS before you continue");
+//                                dlgAlert.setTitle("GPS Error");
+//                                dlgAlert.setPositiveButton("OK", null);
+//                                dlgAlert.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+//
+//                                    public void onClick(DialogInterface arg0, int arg1) {
+//                                        Intent intent = new Intent(getContext(), MainActivity.class);
+//                                        startActivity(intent);
+//
+//                                    }
+//                                });
+//                                dlgAlert.setCancelable(true);
+//                                dlgAlert.create().show();
+                            }
+                        } else {
+                            Log.d(TAG, "current location");
+                        }
+                    }
+                });
+            }
+        }catch (SecurityException e){
+            Log.e(TAG, "SecurityException");
+
+        }
+        catch (Exception ex){
+            Log.e(TAG, "getDeviceLocation: "+ ex.toString());
+
+        }
+    }
+
+    private void moveCamera(LatLng latLng, float zoom){
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
+    }
+
     private void zoomToCurrentLocation(){
         LocationManager locationManager = (LocationManager) App.getContext().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-
         Location location = null;
 
         try {
             location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+
         }catch (SecurityException | NullPointerException e){
             Log.e(TAG, "zoomToCurrentLocation: ", e);
         }
 
         if (location != null)
         {
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16));
 
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
-                    .build();                   // Creates a CameraPosition from the builder
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            previousLocation = location;
-            startTrackingUser();
         }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        addPolyLine(new PolylineOptions()
-                .add(new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
-                        new LatLng(location.getLatitude(), location.getLongitude()))
-                .width(5)
-                .color(Color.RED));
-        previousLocation = location;
-
-        //pointsOfInterestOnLocationChanged = (ArrayList<PointOfInterest>) model.getPointOfInterests(routeSelected).getValue();
-        Station closestStation = null;
-        float distance = 1000;
-//        for(Station station : stations){
-//            Location stationLocation = new Location(station.getCode());
-//            stationLocation.setLatitude(station.getLatitude());
-//            stationLocation.setLongitude(station.getLongitude());
-//            if(location.distanceTo(stationLocation) < 25 && location.distanceTo(stationLocation) < distance){
-//                closestStation = station;
-//                distance = location.distanceTo(stationLocation);
-//            }
-//        }
-
-        if(closestStation != null){
-//            for(Marker marker : mapMarkers){
-//                if(marker.getTag().equals(closestPoi.getId())){
-//                    marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//                    marker.showInfoWindow();
-//                    notificationService.sendNotification(marker.getTitle());
-//
-//                    for (PointOfInterest pointOfInterest : model.getPointOfInterests(routeSelected).getValue()){
-//                        if (closestPoi.getName().equals(pointOfInterest.getName()))
-//                            //TODO: code om aan te geven dat dit het distbijzijnde station is
-//                    }
-//                }
-//            }
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
     }
 
     @Override
@@ -418,4 +419,123 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         }
         updateLocationUI();
     }
+
+//    public void drawUserLine(Location location)
+//    {
+//        addPolyLine(new PolylineOptions()
+//                .add(new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
+//                        new LatLng(location.getLatitude(), location.getLongitude()))
+//                .width(5)
+//                .color(Color.RED));
+//        previousLocation = location;
+//
+//    }
+
+
+    public Location getPreviousLocation() {
+        return previousLocation;
+    }
+
+//    public ArrayList<PointOfInterest> getPointsOfInterestOnLocationChanged() {
+//        return pointsOfInterestOnLocationChanged;
+//    }
+
+    public ArrayList<Marker> getMapMarkers() {
+        return mapMarkers;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        addPolyLine(new PolylineOptions()
+                .add(new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
+                        new LatLng(location.getLatitude(), location.getLongitude()))
+                .width(5)
+                .color(Color.RED), true);
+        previousLocation = location;
+
+//        pointsOfInterestOnLocationChanged = (ArrayList<PointOfInterest>) model.getPointOfInterests(routeSelected).getValue();
+//        PointOfInterest closestPoi = null;
+//        float distance = 1000;
+//        boolean newPoiVisit = false;
+//        for(PointOfInterest poi : pointsOfInterest){
+//            Location poiLocation = new Location(poi.getName());
+//            poiLocation.setLatitude(poi.getLatitude());
+//            poiLocation.setLongitude(poi.getLongitude());
+//            if(location.distanceTo(poiLocation) < 25 && location.distanceTo(poiLocation) < distance && !poi.isVisited()){
+//                closestPoi = poi;
+//                distance = location.distanceTo(poiLocation);
+////                newPoiVisit = true;
+//            }
+//        }
+//
+//
+//
+//        if(closestPoi != null){
+//            for(Marker marker : mapMarkers){
+//                if(marker.getTag().equals(closestPoi.getId())){
+//                    marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+//                    marker.showInfoWindow();
+//                    notificationService.sendNotification(marker.getTitle(), closestPoi, routeSelected);
+//
+//                    for (PointOfInterest pointOfInterest : model.getPointOfInterests(routeSelected).getValue()){
+//                        if (closestPoi.getName().equals(pointOfInterest.getName()))
+//                            pointOfInterest.setVisited(true);
+//                        newPoiVisit = true;
+//                    }
+//                }
+//            }
+//        }
+//
+//        if(newPoiVisit)
+//        {
+//            Intent intent = new Intent(
+//                    App.getContext(),
+//                    DetailedActivity.class
+//            );
+//
+//            Bundle b = new Bundle();
+//            b.putInt("selected_route", routeSelected);
+//            b.putSerializable("clicked_poi", closestPoi);
+//            b.putString("clicked_name", closestPoi.getName());
+//
+//            intent.putExtra("bundle_poi", b);
+//
+//            startActivity(intent);
+
+        }
+
+
+//        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+//
+//
+//        if(PolyUtil.isLocationOnEdge(currentLocation, toFollowRoute, true, 45))
+//        {
+//            System.out.println("\n\n\n\n\n TESTTTTTTTT \n\n\n\n\n\n\n\n");
+//
+//            //Toast.makeText(getActivity(), "loop terug naar de route!",
+//            //Toast.LENGTH_LONG).show();
+//        }
+
+
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Log.d(TAG, "onProviderDisabled: " + provider);
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Log.d(TAG, "onProviderEnabled: " + provider);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.d(TAG, "onStatusChanged: " + provider);
+    }
+
+    //public List<PointOfInterest> getPointsOfInterest() {
+//        return pointsOfInterest;
+//    }
+
+
 }
