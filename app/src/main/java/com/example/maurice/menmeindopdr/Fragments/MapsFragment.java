@@ -76,8 +76,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     private LocationManager mLocationManager;
     private ArrayList<Marker> mapMarkers;
-    private static final long LOCATION_INTERVAL = 700;
-    private static final float LOCATION_DISTANCE = 1;
+    private static final long LOCATION_INTERVAL = 30000;
+    private static final float LOCATION_DISTANCE = 20;
     GetPathFromLocation getPathFromLocation;
     //Station startStation;
     LatLng startingStation;
@@ -165,7 +165,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                             Location currentLocation = (Location) task.getResult();
 
 
-                            startTrackingUser();
+
                             try {
 
 
@@ -241,7 +241,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
         //setMarkers();
 
-
+        startTrackingUser();
 
         getLocationPermission();
         getDeviceLocation();
@@ -463,6 +463,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         previousLocation = location;
 
 
+        map.clear();
+        drawLinesToMap(startingStation);
 
 //        pointsOfInterestOnLocationChanged = (ArrayList<PointOfInterest>) model.getPointOfInterests(routeSelected).getValue();
 //        PointOfInterest closestPoi = null;
