@@ -40,17 +40,17 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
 
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        StringBuilder str_wayPoints = new StringBuilder("waypoints=optimize:true");
+       // StringBuilder str_wayPoints = new StringBuilder("waypoints=optimize:true");
 //        for(PointOfInterest pointOfInterest : wayPoints)
 //        {
 //            str_wayPoints.append("|").append(pointOfInterest.getLatitude()).append(",").append(pointOfInterest.getLongitude());
 //        }
-//        String mode = "mode=walking";
-//        String parameters = str_origin + "&" + str_dest + "&" + str_wayPoints + "&" + mode;
+        String mode = "mode=walking";
+        String parameters = str_origin + "&" + str_dest + "&" +  mode;
         //String output = "json";
 
         //String urlOriginal = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + API_KEY;
-        String url = "https://maps.moviecast.io/directions" + "?" ;//+ parameters + "&key=" + API_KEY;
+        String url = "https://maps.moviecast.io/directions" + "?" + parameters + "&key=" + API_KEY;
 
         return url;
     }

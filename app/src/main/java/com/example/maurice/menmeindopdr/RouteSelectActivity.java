@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
@@ -24,6 +25,7 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
     ListView stationsListView;
     ArrayAdapter stationsAdapter;
     ArrayList<Station> stationsArray;
+    Button testStationButton;
 
     private List<Station> wallList = new ArrayList<>();
 
@@ -32,9 +34,27 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listview_pickroute);
 
+        testStationButton = findViewById(R.id.testStationButton);
+
+        LatLng testStation = new LatLng(51.563983, 5.079380);
+        testStationButton.setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    getApplicationContext(),
+                    MapsActivity.class
+            );
+
+//            Station station = stationsArray.get(position);
+//            intent.putExtra("selectedEndStation", station);
+            intent.putExtra("startingStationLat", testStation.latitude);
+            intent.putExtra("startingStationLong", testStation.longitude);
+
+
+            startActivity(intent);
+        });
+
         String endingStation = getIntent().getStringExtra("gezochtStation");
         String startingStation = getIntent().getStringExtra("startingStation");
-        LatLng testStation = new LatLng(51.563983, 5.079380);
+
 
         //TODO ending station vergegelijken en routes zoeken voor de listview
 

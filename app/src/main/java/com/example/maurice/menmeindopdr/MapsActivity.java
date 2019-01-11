@@ -76,7 +76,7 @@ public class MapsActivity extends AppCompatActivity {
         mapsFragment = new MapsFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putInt(SELECTED_ROUTE_BUNDLE_TAG, selectedRoute);//TODO meegeven locaties
+        //bundle.putInt(SELECTED_ROUTE_BUNDLE_TAG, selectedRoute);//TODO meegeven locaties
         bundle.putDouble("startingStationLat", testStation.latitude);
         bundle.putDouble("startingStationLong", testStation.longitude);
 

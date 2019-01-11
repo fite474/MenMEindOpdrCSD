@@ -90,7 +90,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         getMapAsync(this);
 
         startingStation = new LatLng(getArguments().getDouble("startingStationLat"),
-                getArguments().getDouble("startingStationgLong"));//TODO
+                getArguments().getDouble("startingStationLong"));//TODO
+
+        System.out.println("test");
 
 
      //   toFollowRoute = new ArrayList<>(); //is voor het aangeven als je van de route afwijkt
@@ -122,18 +124,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         map.addMarker(marker).setTag(tag);
     }
 
-    public void addPolyLine(final PolylineOptions polyLine, boolean isUser) {
-        if (map == null) {
-            runnables.add(() -> addPolyLineInternal(polyLine, isUser));
-        } else {
-            addPolyLineInternal(polyLine, isUser);
-        }
-    }
-
-    private void addPolyLineInternal(final PolylineOptions polyLine, boolean isUser) {
+    public void addPolyLine(final PolylineOptions polyLine) {
         Polyline line = map.addPolyline(polyLine);
-        if (!isUser)
-            toFollowRoute.addAll(line.getPoints());
     }
 
 
@@ -141,7 +133,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
 
 
-    public void drawLinesToMap(LatLng currentLocation, LatLng targetStation){//List<PointOfInterest> pointOfInterests){
+
+    public void drawLinesToMap(LatLng targetStation){//List<PointOfInterest> pointOfInterests){
         mFuseLocationProviderClient = LocationServices.getFusedLocationProviderClient(App.getContext());
         try {
             if(locationPermissionGranted) {
@@ -160,7 +153,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
                                         new GetPathFromLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), targetStation,
                                                 polyLine -> {
-                                                    addPolyLine(polyLine, false);
+                                                    addPolyLine(polyLine);
                                                 }).execute();
 
 
@@ -340,8 +333,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                                 Log.d(TAG, "onComplete: ");
                                 Location currentLocation = (Location) task.getResult();
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
-                                drawLinesToMap(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                                        new LatLng(startingStation.latitude, startingStation.longitude));
+                                previousLocation = currentLocation;
+                                drawLinesToMap(startingStation);
                             }
                             catch(Exception e){
 //                                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getContext());
@@ -443,7 +436,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 .add(new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
                         new LatLng(location.getLatitude(), location.getLongitude()))
                 .width(5)
-                .color(Color.RED), true);
+                .color(Color.RED));
         previousLocation = location;
 
 //        pointsOfInterestOnLocationChanged = (ArrayList<PointOfInterest>) model.getPointOfInterests(routeSelected).getValue();
