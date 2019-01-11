@@ -102,7 +102,7 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
                 );
 
                 Station station = stationsArray.get(position);
-                intent.putExtra("selectedEndStation", station);
+                //intent.putExtra("selectedEndStation", station);
                 intent.putExtra("startingStationLat", testStation.latitude);
                 intent.putExtra("startingStationLong", testStation.longitude);
 

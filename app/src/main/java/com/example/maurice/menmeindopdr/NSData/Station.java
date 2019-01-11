@@ -4,7 +4,7 @@ import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public abstract class Station implements Parcelable
+public class Station
 {
     private String code;
     private StationType type;
