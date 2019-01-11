@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.maurice.menmeindopdr.API.NSAPICallType;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
 import com.example.maurice.menmeindopdr.API.NsListener;
 import com.example.maurice.menmeindopdr.NSData.Station;
@@ -86,9 +87,8 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
 
         NsAPIHandler api = new NsAPIHandler(
                 this.getApplicationContext(),
-                this,
-                "ipadress hier plaatsen");
-        //api.HandleAPICall();
+                this);
+        api.HandleAPICall(NSAPICallType.FIND_NEARBY_STATION);
 
         stationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -111,6 +111,18 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
             }
         });
 
+
+    }
+
+    @Override
+    public void onStationsAvailable(ArrayList<Station> stations)
+    {
+
+    }
+
+    @Override
+    public void noStationAvailable()
+    {
 
     }
 

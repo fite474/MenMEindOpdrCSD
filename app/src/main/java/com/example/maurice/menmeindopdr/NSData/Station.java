@@ -4,22 +4,24 @@ import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class Station
+import java.io.Serializable;
+
+public class Station implements Serializable
 {
     private String code;
     private StationType type;
-    private String[] namen;
+    private String naam;
     private String country;
-    private int uicCode;
+    private String uicCode;
     private double latitude;
     private double longitude;
     private LatLng coordinate;
 
-    public Station(String code, StationType type, String[] namen, String country, int uicCode, double latitude, double longitude)
+    public Station(String code, StationType type, String naam, String country, String uicCode, double latitude, double longitude)
     {
         this.code = code;
         this.type = type;
-        this.namen = namen;
+        this.naam = naam;
         this.country = country;
         this.uicCode = uicCode;
         this.latitude = latitude;
@@ -46,14 +48,14 @@ public class Station
         this.type = type;
     }
 
-    public String[] getNames()
+    public String getName()
     {
-        return namen;
+        return naam;
     }
 
-    public void setNames(String[] namen)
+    public void setName(String name)
     {
-        this.namen = namen;
+        this.naam = name;
     }
 
     public String getCountry()
@@ -66,12 +68,12 @@ public class Station
         this.country = country;
     }
 
-    public int getUicCode()
+    public String getUicCode()
     {
         return uicCode;
     }
 
-    public void setUicCode(int uicCode)
+    public void setUicCode(String uicCode)
     {
         this.uicCode = uicCode;
     }

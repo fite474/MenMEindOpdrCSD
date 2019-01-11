@@ -2,15 +2,29 @@ package com.example.maurice.menmeindopdr.API;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.os.Parcel;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.maurice.menmeindopdr.NSData.Station;
+import com.example.maurice.menmeindopdr.NSData.StationType;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class NsAPIHandler  implements Serializable {
 
@@ -18,38 +32,114 @@ public class NsAPIHandler  implements Serializable {
     RequestQueue queue;
     NsListener listener;
     private String basicUrl;
-   // private String apiKey;
+    private List<Station> allStations;
 
-
-    public NsAPIHandler(Context context, NsListener listener, String ipAdress) {
-
+    public NsAPIHandler(Context context, NsListener listener) {
+        this.allStations = new ArrayList<>();
         this.context = context;
         queue = Volley.newRequestQueue(context.getApplicationContext());
         this.listener = listener;
-        //this.basicUrl = "http://"+ipAdress+"/api";
-        this.basicUrl = "http://"+ipAdress+"/api/" + "iYrmsQq1wu5FxF9CPqpJCnm1GpPVylKBWDUsNDhB";
+        this.basicUrl = "https://ns-api.nl/reisinfo/api";
 
 
     }
 
 
-    public void HandleAPICall(NSAPICallType type, @Nullable String lightID, @Nullable JSONObject body)
+
+
+    public void HandleAPICall(NSAPICallType type)
     {
         switch(type)
         {
             case FROM_TO_REQUEST:
-                //getAllLights();
+
                 break;
             case FIND_NEARBY_STATION:
-                //setAllLights(body);
+                getStations();
                 break;
             case FIND_TRAIN:
 
-                //getSingleLight(lightID);
                 break;
 
             default:break;
         }
+    }
+
+    private void getStations()
+    {
+        String url = basicUrl + "/v2/stations";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>()
+                {
+                    @Override
+                    public void onResponse(JSONObject response)
+                    {
+                        try
+                        {
+                            ArrayList<Station> stations = new ArrayList<>();
+                            JSONArray payload = response.getJSONArray("payload");
+                            for(int i = 0; i < payload.length()-1; i++)
+                            {
+                                Log.d("Handling station: ", String.valueOf(i));
+                                StationType type;
+
+                                JSONObject stationJson = payload.getJSONObject(i);
+                                String code = stationJson.getString("code");
+                                String stationType = stationJson.getString("stationType");
+                                if(stationType == "STOPTREIN_STATION")
+                                {
+                                    type = StationType.STOP_STATION;
+                                }
+                                else
+                                {
+                                    type = StationType.IC_STATION;
+                                }
+
+                                String naam = stationJson.getJSONObject("namen").getString("lang");
+                                String country = stationJson.getString("land");
+                                String uicCode = stationJson.getString("UICCode");
+                                double lat = stationJson.getDouble("lat");
+                                double lon = stationJson.getDouble("lng");
+
+                                Station station = new Station(code, type, naam, country, uicCode, lat, lon);
+                                stations.add(station);
+                            }
+
+                            listener.onStationsAvailable(stations);
+                        } catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        Log.d("ERROR_GETTING_STATIONS", "Kan stations niet vinden pleurislijer");
+                        listener.noStationAvailable();
+                    }
+                })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap();
+               // headers.put("Accept", "application/json");
+                headers.put("x-api-key", "SYfRxOVRoY9ib6u01cXE15gFRp2FraTB7OR7xFad");
+                return headers;
+            }
+        };
+        queue.add(request);
+
+
+
+
+
+
     }
 
 //    private void getSingleLight(String lightID)
