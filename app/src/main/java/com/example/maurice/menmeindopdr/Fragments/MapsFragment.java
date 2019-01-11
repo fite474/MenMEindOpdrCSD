@@ -69,11 +69,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private FusedLocationProviderClient mFuseLocationProviderClient;
     private static final float DEFAULT_ZOOM = 15;
     private Location previousLocation;
-    Polyline line;
-    LatLng src;
-    LatLng dest;
 
-    private int routeSelected;
 
     private LocationManager mLocationManager;
     private ArrayList<Marker> mapMarkers;
@@ -89,17 +85,12 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         runnables = new LinkedBlockingQueue<>();
 
 
-
-        if (getArguments() != null) {
-            routeSelected = getArguments().getInt(MapsActivity.SELECTED_ROUTE_BUNDLE_TAG);
-        }
-
         getMapAsync(this);
 
 
 
-        mapMarkers = new ArrayList<>();
-        toFollowRoute = new ArrayList<>();
+
+     //   toFollowRoute = new ArrayList<>(); //is voor het aangeven als je van de route afwijkt
     }
 
 
@@ -266,7 +257,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     }
 
     private void setMarkers() {
-        Log.d(TAG, "setMarkers: " + routeSelected);
+//        Log.d(TAG, "setMarkers: " + routeSelected);
 //        switch(routeSelected){
 //            case SelectedRoute.BLIND_WALLS:
 //                model.getPointOfInterests(routeSelected).observe(this, pointOfInterests -> {

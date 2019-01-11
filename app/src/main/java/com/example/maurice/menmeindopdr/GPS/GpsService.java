@@ -41,7 +41,7 @@ public class GpsService extends Service {
     private Location previousLocation;
    // private ArrayList<PointOfInterest> pointOfInterests;
    // private NotificationService notificationService = NotificationService.getInstance();
-    private List<Marker> mapMarkers;
+
 
     @Nullable
     @Override
