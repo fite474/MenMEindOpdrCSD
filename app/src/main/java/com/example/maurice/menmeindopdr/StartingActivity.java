@@ -36,7 +36,7 @@ public class StartingActivity extends AppCompatActivity {
     boolean locationFound = false;
 
 
-    private static int TIME_OUT = 4840;
+    private static int TIME_OUT = 4876;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,11 +44,8 @@ public class StartingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_starting);
 
         backgroundImageView = findViewById(R.id.start_backgrImageView);
-        logoImageView = findViewById(R.id.start_logoImageView);
-        fetchTrainTextView = findViewById(R.id.start_fetchTrainTextView);
 
-        backgroundImageView.setImageResource(R.drawable.rasta);
-        logoImageView.setImageResource(R.drawable.nug);
+        backgroundImageView.setImageResource(R.drawable.startscreenv1);
 
         getLocationPermission();
         getDeviceLocation();
