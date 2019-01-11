@@ -15,13 +15,20 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.maurice.menmeindopdr.NSData.Station;
 import com.example.maurice.menmeindopdr.NSData.StationType;
+import com.example.maurice.menmeindopdr.NSData.TreinRit;
+import com.example.maurice.menmeindopdr.NSData.TreinType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,12 +54,13 @@ public class NsAPIHandler  implements Serializable {
 
 
 
-    public void HandleAPICall(NSAPICallType type)
+    public void HandleAPICall(NSAPICallType type, @Nullable String codeFromStation, @Nullable String codeToStation)
     {
         switch(type)
         {
             case FROM_TO_REQUEST:
-
+                if(codeFromStation != null && codeToStation != null)
+                    findJourneys(makeJourneyUrl(codeFromStation, codeToStation));
                 break;
             case FIND_NEARBY_STATION:
                 getStations();
@@ -64,6 +72,87 @@ public class NsAPIHandler  implements Serializable {
             default:break;
         }
     }
+
+    private void findJourneys(String url)
+    {
+        JsonObjectRequest journeyRequest = new JsonObjectRequest(Request.Method.GET,
+                url,
+                null,
+                (Response.Listener<JSONObject>) response -> {
+                    try
+                    {
+                        ArrayList<TreinRit> ritten = new ArrayList<>();
+                        JSONArray trips = response.getJSONArray("trips");
+                        for(int i = 0; i < trips.length(); i++)
+                        {
+                            Log.d("Handling rit: ", String.valueOf(i));
+
+                            JSONObject jsonRit = trips.getJSONObject(i);
+                            int duration = jsonRit.getInt("plannedDurationInMinutes");
+                            int transfers = jsonRit.getInt("transfers");
+                            JSONArray legs = jsonRit.getJSONArray("legs");
+                            JSONObject startLeg = legs.getJSONObject(0).getJSONObject("origin");
+                            String treintype = startLeg.getJSONObject("product").getString("categoryCode");
+                            String departureTrack = startLeg.getString("plannedTrack");
+                            String departureTime = startLeg.getString("actualDateTime");
+                            JSONObject endleg;
+                            if(transfers > 0)
+                            {
+                                endleg = legs.getJSONObject(transfers);
+                            }
+                            else
+                            {
+                                endleg = startLeg;
+                            }
+                            String arrivalTime = endleg.getJSONObject("destination").getString("actualDateTime");
+
+                            int plusIndex = arrivalTime.indexOf('+');
+                            String cutArrivalTime = arrivalTime.substring(0, plusIndex-1);
+                            String cutDepartTime = departureTime.substring(0, plusIndex-1);
+
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd'T'hh:mm:ss");
+                            Date vertrekTijd = format.parse(cutDepartTime);
+                            Date aankomstTijd = format.parse(cutArrivalTime);
+                            TreinType type;
+                            if(treintype.equals("IC")){type = TreinType.INTERCITY;}
+                            else{type = TreinType.SPRINTER;}
+
+
+                            TreinRit rit = new TreinRit(duration, transfers, vertrekTijd, aankomstTijd, type);
+                            ritten.add(rit);
+                        }
+
+                        listener.onJourneysAvailable(ritten);
+
+
+
+                    } catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    } catch (ParseException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                },
+                (Response.ErrorListener) response ->
+                {
+                    Log.d("JOURNEYERROR", "YOU'RE NOT GOING ON AN ADVENTURE");
+                }
+        )
+        {
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Accept", "application/json");
+                headers.put("x-api-key", "SYfRxOVRoY9ib6u01cXE15gFRp2FraTB7OR7xFad");
+                return headers;
+            }
+        };
+        queue.add(journeyRequest);
+    }
+
+
 
     private void getStations()
     {
@@ -80,7 +169,7 @@ public class NsAPIHandler  implements Serializable {
                         {
                             ArrayList<Station> stations = new ArrayList<>();
                             JSONArray payload = response.getJSONArray("payload");
-                            for(int i = 0; i < payload.length()-1; i++)
+                            for(int i = 0; i < payload.length(); i++)
                             {
                                 Log.d("Handling station: ", String.valueOf(i));
                                 StationType type;
@@ -128,7 +217,7 @@ public class NsAPIHandler  implements Serializable {
             public Map<String, String> getHeaders() throws AuthFailureError
             {
                 HashMap<String, String> headers = new HashMap();
-               // headers.put("Accept", "application/json");
+                headers.put("Accept", "application/json");
                 headers.put("x-api-key", "SYfRxOVRoY9ib6u01cXE15gFRp2FraTB7OR7xFad");
                 return headers;
             }
@@ -194,4 +283,11 @@ public class NsAPIHandler  implements Serializable {
 //        this.queue.add(setLightRequest);
 //    }
 
+    private String makeJourneyUrl(String from, String to)
+    {
+        return basicUrl + "/v3/trips?travelClass=2&originTransit=false&originWalk=false&originBike=false"
+                +"&originCar=false&travelAssistanceTransferTime=0&searchForAccessibleTrip=false&destinationTransit=false"
+                +"&destinationWalk=false&destinationBike=false&destinationCar=false&excludeHighSpeedTrains=false"
+                +"&excludeReservationRequired=false&passing=false&fromStation=" + from + "&toStation=" + to;
+    }
 }
