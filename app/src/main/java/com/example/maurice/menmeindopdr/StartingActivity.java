@@ -87,11 +87,13 @@ public class StartingActivity extends AppCompatActivity {
             locationPermissionGranted = true;
             //updateLocationUI();
         }
-//        else {
-//            ActivityCompat.requestPermissions(getActivity(),
-//                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-//                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-//        }
+        else {
+            ActivityCompat.requestPermissions(StartingActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            getLocationPermission();
+
+        }
     }
 
     private void getDeviceLocation(){
