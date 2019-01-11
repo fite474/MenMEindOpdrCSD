@@ -31,6 +31,10 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listview_pickroute);
 
+        String endingStation = getIntent().getStringExtra("gezochtStation");
+
+        //TODO ending station vergegelijken en routes zoeken voor de listview
+
 //
 //        String json = JsonUtil.loadJSONFromAsset(MainActivity.this);
 ////        Log.d(TAG, "onCreate: json from asset " + json );
@@ -75,7 +79,7 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
                 );
 
                 Station station = stationsArray.get(position);
-                intent.putExtra("BLINDWALL_OBJECT", station);
+                intent.putExtra("selectedRoute", station);
 
                 startActivity(intent);
             }

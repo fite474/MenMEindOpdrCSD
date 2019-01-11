@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     Button zoekStationButton;
     TextView currentLocation;
     LatLng currentDeviceLocation;
+    EditText gezochtStation;
 
 
     @Override
@@ -33,11 +35,16 @@ public class MainActivity extends AppCompatActivity {
 
         currentLocation.setText(String.valueOf(currentDeviceLocation.latitude)+"."+String.valueOf(currentDeviceLocation.longitude));
 
+
+
+
         zoekStationButton.setOnClickListener(v -> {
+            final String stationToStart = String.valueOf(zoekStationButton.getText());
             Intent intent = new Intent(
                     getApplicationContext(),
-                    MapsActivity.class
+                    RouteSelectActivity.class
             );
+            intent.putExtra("gezochtStation", stationToStart);
             //intent.putExtra(INTENT_TAG_SELECT_ROUTE, SelectedRoute.HISTORIC_KM);
             startActivity(intent);
         });
