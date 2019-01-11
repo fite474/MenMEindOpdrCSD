@@ -18,6 +18,7 @@ import com.example.maurice.menmeindopdr.API.NSAPICallType;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
 import com.example.maurice.menmeindopdr.API.NsListener;
 import com.example.maurice.menmeindopdr.NSData.Station;
+import com.example.maurice.menmeindopdr.NSData.TreinRit;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
@@ -119,7 +120,7 @@ public class StartingActivity extends AppCompatActivity implements NsListener
                             try {
                                 Log.d(TAG, "onComplete: ");
                                 currentLocation = (Location) task.getResult();
-                                api.HandleAPICall(NSAPICallType.FIND_NEARBY_STATION);
+                                api.HandleAPICall(NSAPICallType.FIND_NEARBY_STATION,  null, null);
                                 //moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                             }
                             catch(Exception e){
@@ -194,5 +195,11 @@ public class StartingActivity extends AppCompatActivity implements NsListener
         i.putExtra("currentLocationLat", currentLocationLat);
         i.putExtra("currentLocationLong", currentLocationLong);
         startActivity(i);
+    }
+
+    @Override
+    public void onJourneysAvailable(ArrayList<TreinRit> ritten)
+    {
+
     }
 }
