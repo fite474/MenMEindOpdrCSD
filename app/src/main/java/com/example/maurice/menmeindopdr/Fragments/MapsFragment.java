@@ -2,20 +2,33 @@ package com.example.maurice.menmeindopdr.Fragments;
 
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.location.LocationServices;
+import com.example.maurice.menmeindopdr.App;
 import com.example.maurice.menmeindopdr.DrawingRoute.GetPathFromLocation;
 import com.example.maurice.menmeindopdr.MapsActivity;
 import com.example.maurice.menmeindopdr.NSData.Station;
 import com.example.maurice.menmeindopdr.R;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -23,7 +36,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -33,7 +49,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  *  NOTE: GEBRUIK NIET DE VARIABLE map BUITEN DE onMapReady, gebruik bijvoorbeeld de addPolyline of de addMarker methode.
  */
-public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener {
 
     private final static String TAG = MapsFragment.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -41,12 +57,18 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private boolean locationPermissionGranted;
     private Queue<Runnable> runnables;
 
-    Polyline line;
+    private FusedLocationProviderClient mFuseLocationProviderClient;
+    private Location previousLocation;
+    private LocationManager mLocationManager;
+
+
+    List<Station> stations;
+
     LatLng src;
     LatLng dest;
     //private MapsViewModel model;
     private int routeSelected;
-    //private List<PointOfInterest> pointOfInterests;
+
     List<LatLng> waypoints;
 
     GetPathFromLocation getPathFromLocation;
@@ -142,23 +164,63 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 //        drawLinesToMap(blindWalls);
     }
 
-    public void drawLinesToMap(List<Station> pointOfInterests){
-//        LocationManager locationManager = (LocationManager) App.getContext().getSystemService(Context.LOCATION_SERVICE);
-//        Criteria criteria = new Criteria();
-//        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+    public void drawLinesToMap(LatLng endDestination){
+        mFuseLocationProviderClient = LocationServices.getFusedLocationProviderClient(App.getContext());
+        try {
+            if(locationPermissionGranted) {
+                Task location = mFuseLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "onComplete: ");
+                            Location currentLocation = (Location) task.getResult();
 
-        //src = new LatLng(pointOfInterests.get(0).getLatitude(), pointOfInterests.get(0).getLongitude());//new LatLng(location.getLatitude(), location.getLongitude());//new LatLng(pointOfInterests.get(0).getLatitude(), pointOfInterests.get(0).getLongitude());
-        //dest = new LatLng(pointOfInterests.get(1).getLatitude(), pointOfInterests.get(1).getLongitude());
 
-        int targetSize = 21;
-  //      List<List<PointOfInterest>> output = Lists.partition(pointOfInterests, targetSize);
+                            //startTrackingUser();
+                            try {
 
-//        for (List<PointOfInterest> partialList : output) {
-//            new GetPathFromLocation(src, dest, partialList, polyLine -> {
-//                addPolyLine(polyLine);
-//            }).execute();
-//        }
+                                new GetPathFromLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                                        endDestination,//new LatLng(1,1),//partialList.get(partialList.size() - 1).getLatitude(), partialList.get(partialList.size() - 1).getLongitude()),
 
+                                        polyLine -> {
+                                            addPolyLine(polyLine);
+                                        }).execute();
+
+
+
+                            }catch (Exception e){
+                                Log.e(TAG, "onComplete: ", e);
+                            }
+
+                        } else {
+                            Log.d(TAG, "current location");
+                        }
+                    }
+                });
+            }
+        }catch (SecurityException e){
+            Log.e(TAG, "SecurityException");
+        }
+        catch (Exception ex){
+            Log.e(TAG, "getDeviceLocation: "+ ex.toString());
+        }
+    }
+
+
+    private void startTrackingUser() {
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) App.getContext().getSystemService(Context.LOCATION_SERVICE);
+        }
+        try {
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 700, 1,
+                    this);
+        } catch (java.lang.SecurityException ex) {
+            Log.e(TAG, "fail to request location update, ignore", ex);
+        } catch (IllegalArgumentException ex) {
+            Log.e(TAG, "gps provider does not exist " + ex.getMessage());
+        }
     }
 
 
@@ -228,77 +290,132 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     }
 
     private void getLocationPermission() {
-//        Log.d(TAG, "getLocationPermission: ");
-//        if (ContextCompat.checkSelfPermission(App.getContext(),
-//                android.Manifest.permission.ACCESS_FINE_LOCATION)
-//                == PackageManager.PERMISSION_GRANTED) {
-//            locationPermissionGranted = true;
-//            updateLocationUI();
-//        } else {
-//            ActivityCompat.requestPermissions(getActivity(),
-//                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-//                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-//        }
+        Log.d(TAG, "getLocationPermission: ");
+        if (ContextCompat.checkSelfPermission(App.getContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true;
+            updateLocationUI();
+        } else {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
     }
 
-//    private void updateLocationUI() {
-//        Log.d(TAG, "updateLocationUI: map == null: " + (map == null));
-//        Log.d(TAG, "updateLocationUI: locationPermissionGranted: " + locationPermissionGranted);
-//        if (map == null) {
-//            return;
-//        }
-//        try {
-//            if (locationPermissionGranted) {
-//                map.setMyLocationEnabled(true);
-//                map.getUiSettings().setMyLocationButtonEnabled(true);
-//                map.getUiSettings().setCompassEnabled(true);
-//                zoomToCurrentLocation();
-//            } else {
-//                map.setMyLocationEnabled(false);
-//                map.getUiSettings().setMyLocationButtonEnabled(false);
-//                getLocationPermission();
+    private void updateLocationUI() {
+        Log.d(TAG, "updateLocationUI: map == null: " + (map == null));
+        Log.d(TAG, "updateLocationUI: locationPermissionGranted: " + locationPermissionGranted);
+        if (map == null) {
+            return;
+        }
+        try {
+            if (locationPermissionGranted) {
+                map.setMyLocationEnabled(true);
+                map.getUiSettings().setMyLocationButtonEnabled(true);
+                map.getUiSettings().setCompassEnabled(true);
+                zoomToCurrentLocation();
+            } else {
+                map.setMyLocationEnabled(false);
+                map.getUiSettings().setMyLocationButtonEnabled(false);
+                getLocationPermission();
+            }
+        } catch (SecurityException e)  {
+            Log.e(TAG, "updateLocationUI: ", e);
+        }
+    }
+
+    private void zoomToCurrentLocation(){
+        LocationManager locationManager = (LocationManager) App.getContext().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+
+        Location location = null;
+
+        try {
+            location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        }catch (SecurityException | NullPointerException e){
+            Log.e(TAG, "zoomToCurrentLocation: ", e);
+        }
+
+        if (location != null)
+        {
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                    .zoom(17)                   // Sets the zoom
+                    .build();                   // Creates a CameraPosition from the builder
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            previousLocation = location;
+            startTrackingUser();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        addPolyLine(new PolylineOptions()
+                .add(new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
+                        new LatLng(location.getLatitude(), location.getLongitude()))
+                .width(5)
+                .color(Color.RED));
+        previousLocation = location;
+
+        //pointsOfInterestOnLocationChanged = (ArrayList<PointOfInterest>) model.getPointOfInterests(routeSelected).getValue();
+        Station closestStation = null;
+        float distance = 1000;
+//        for(Station station : stations){
+//            Location stationLocation = new Location(station.getCode());
+//            stationLocation.setLatitude(station.getLatitude());
+//            stationLocation.setLongitude(station.getLongitude());
+//            if(location.distanceTo(stationLocation) < 25 && location.distanceTo(stationLocation) < distance){
+//                closestStation = station;
+//                distance = location.distanceTo(stationLocation);
 //            }
-//        } catch (SecurityException e)  {
-//            Log.e(TAG, "updateLocationUI: ", e);
 //        }
-//    }
+
+        if(closestStation != null){
+//            for(Marker marker : mapMarkers){
+//                if(marker.getTag().equals(closestPoi.getId())){
+//                    marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+//                    marker.showInfoWindow();
+//                    notificationService.sendNotification(marker.getTitle());
 //
-//    private void zoomToCurrentLocation(){
-//        LocationManager locationManager = (LocationManager) App.getContext().getSystemService(Context.LOCATION_SERVICE);
-//        Criteria criteria = new Criteria();
-//
-//        Location location = null;
-//
-//        try {
-//            location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-//        }catch (SecurityException | NullPointerException e){
-//            Log.e(TAG, "zoomToCurrentLocation: ", e);
-//        }
-//
-//        if (location != null)
-//        {
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
-//
-//            CameraPosition cameraPosition = new CameraPosition.Builder()
-//                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-//                    .zoom(17)                   // Sets the zoom
-//                    .build();                   // Creates a CameraPosition from the builder
-//            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        locationPermissionGranted = false;
-//        switch (requestCode) {
-//            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-//
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    locationPermissionGranted = true;
+//                    for (PointOfInterest pointOfInterest : model.getPointOfInterests(routeSelected).getValue()){
+//                        if (closestPoi.getName().equals(pointOfInterest.getName()))
+//                            //TODO: code om aan te geven dat dit het distbijzijnde station is
+//                    }
 //                }
 //            }
-//        }
-//        updateLocationUI();
-//    }
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        locationPermissionGranted = false;
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true;
+                }
+            }
+        }
+        updateLocationUI();
+    }
 }
