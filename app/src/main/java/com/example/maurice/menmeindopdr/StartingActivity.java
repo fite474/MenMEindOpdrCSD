@@ -24,8 +24,6 @@ import java.util.Timer;
 
 public class StartingActivity extends AppCompatActivity {
     private ImageView backgroundImageView;
-    private ImageView logoImageView;
-    private TextView fetchTrainTextView;
     private final static String TAG = StartingActivity.class.getSimpleName();
     private boolean locationPermissionGranted;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
