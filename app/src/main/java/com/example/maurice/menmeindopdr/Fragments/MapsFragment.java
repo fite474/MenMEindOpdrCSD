@@ -76,6 +76,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private static final long LOCATION_INTERVAL = 700;
     private static final float LOCATION_DISTANCE = 1;
     GetPathFromLocation getPathFromLocation;
+    //Station startStation;
+    LatLng startingStation;
 
     List<LatLng> toFollowRoute;
 
@@ -87,7 +89,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
         getMapAsync(this);
 
-
+        startingStation = new LatLng(getArguments().getDouble("startingStationLat"),
+                getArguments().getDouble("startingStationgLong"));//TODO
 
 
      //   toFollowRoute = new ArrayList<>(); //is voor het aangeven als je van de route afwijkt
@@ -153,11 +156,6 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
                             startTrackingUser();
                             try {
-
-
-                                int targetSize = 21;
-
-
 
 
                                         new GetPathFromLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), targetStation,
@@ -226,7 +224,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 //        map.setOnInfoWindowClickListener(this);
 //        map.setInfoWindowAdapter(new CustomInfoWindow(getActivity()));
 
-        setMarkers();
+        //setMarkers();
+
+
 
         getLocationPermission();
         getDeviceLocation();
@@ -340,6 +340,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                                 Log.d(TAG, "onComplete: ");
                                 Location currentLocation = (Location) task.getResult();
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                                drawLinesToMap(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                                        new LatLng(startingStation.latitude, startingStation.longitude));
                             }
                             catch(Exception e){
 //                                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getContext());

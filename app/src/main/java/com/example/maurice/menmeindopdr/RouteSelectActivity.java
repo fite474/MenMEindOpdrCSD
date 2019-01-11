@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
 import com.example.maurice.menmeindopdr.API.NsListener;
 import com.example.maurice.menmeindopdr.NSData.Station;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
         setContentView(R.layout.activity_listview_pickroute);
 
         String endingStation = getIntent().getStringExtra("gezochtStation");
+        String startingStation = getIntent().getStringExtra("startingStation");
+        LatLng testStation = new LatLng(51.563983, 5.079380);
 
         //TODO ending station vergegelijken en routes zoeken voor de listview
 
@@ -79,7 +82,10 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
                 );
 
                 Station station = stationsArray.get(position);
-                intent.putExtra("selectedRoute", station);
+                intent.putExtra("selectedEndStation", station);
+                intent.putExtra("startingStationLat", testStation.latitude);
+                intent.putExtra("startingStationLong", testStation.longitude);
+
 
                 startActivity(intent);
             }

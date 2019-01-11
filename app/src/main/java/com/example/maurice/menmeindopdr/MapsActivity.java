@@ -39,6 +39,9 @@ public class MapsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        LatLng testStation = new LatLng(getIntent().getDoubleExtra("startingStationLat", 1.1), getIntent().getDoubleExtra("startingStationLong", 1.1));
+
+
 //        viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
 //        viewModel.setRotationDeviceListener(this);
 
@@ -68,11 +71,15 @@ public class MapsActivity extends AppCompatActivity {
 //        helpButton.setText(R.string.help);
 //        helpButton.setOnClickListener(v -> new HelpFragment().show(getSupportFragmentManager(), "help_fragment"));
 
+        //LatLng testingStartStation = new LatLng(1.1,1.1);//TODO
 
         mapsFragment = new MapsFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putInt(SELECTED_ROUTE_BUNDLE_TAG, selectedRoute);
+        bundle.putInt(SELECTED_ROUTE_BUNDLE_TAG, selectedRoute);//TODO meegeven locaties
+        bundle.putDouble("startingStationLat", testStation.latitude);
+        bundle.putDouble("startingStationLong", testStation.longitude);
+
         mapsFragment.setArguments(bundle);
 
         FragmentManager fragmentManager = getSupportFragmentManager();

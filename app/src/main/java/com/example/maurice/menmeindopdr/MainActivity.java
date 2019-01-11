@@ -39,12 +39,14 @@ public class MainActivity extends AppCompatActivity {
 
 
         zoekStationButton.setOnClickListener(v -> {
-            final String stationToStart = String.valueOf(zoekStationButton.getText());
+            final String stationToEnd = String.valueOf(zoekStationButton.getText());
+            final String startingStation = "";//TODO get starting/ closest station
             Intent intent = new Intent(
                     getApplicationContext(),
                     RouteSelectActivity.class
             );
-            intent.putExtra("gezochtStation", stationToStart);
+            intent.putExtra("gezochtStation", stationToEnd);
+            intent.putExtra("startingStation", startingStation);
             //intent.putExtra(INTENT_TAG_SELECT_ROUTE, SelectedRoute.HISTORIC_KM);
             startActivity(intent);
         });
