@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.maurice.menmeindopdr.MapsActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -18,23 +17,23 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-
-public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions> {
+public class GetDetailsFromPath extends AsyncTask<String, Void, List<Integer>> {
 
     private String TAG = "GetPathFromLocation";
     private String API_KEY = "a4a31a0f-43a6-4e33-b743-49b556907849";
     private LatLng source, destination;
-    private DirectionPointListener resultCallback;
+    private DirectionsDetailsListener resultCallback;
     private int durationTime;
     private int totalMeters;
-   // private List<PointOfInterest> wayPoints;
+    private List<Integer> details;
+    // private List<PointOfInterest> wayPoints;
 
-    public GetPathFromLocation(LatLng source, LatLng destination, DirectionPointListener resultCallback) {
+    public GetDetailsFromPath(LatLng source, LatLng destination, DirectionsDetailsListener resultCallback) {
         this.source = source;
         this.destination = destination;
         this.resultCallback = resultCallback;
+        details = new ArrayList<>();
         //this.wayPoints = wayPoints;
 
     }
@@ -43,7 +42,7 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
 
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-       // StringBuilder str_wayPoints = new StringBuilder("waypoints=optimize:true");
+        // StringBuilder str_wayPoints = new StringBuilder("waypoints=optimize:true");
 //        for(PointOfInterest pointOfInterest : wayPoints)
 //        {
 //            str_wayPoints.append("|").append(pointOfInterest.getLatitude()).append(",").append(pointOfInterest.getLongitude());
@@ -72,7 +71,7 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
 
 
     @Override
-    protected PolylineOptions doInBackground(String... url) {
+    protected List<Integer> doInBackground(String... url) {
 
         String data;
 
@@ -107,51 +106,28 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
 
 
             JSONObject jsonObject;
-            List<List<HashMap<String, String>>> routes = null;
+
 
             try {
                 jsonObject = new JSONObject(data);
                 // Starts parsing data
                 DirectionHelper helper = new DirectionHelper();
-                routes = helper.parse(jsonObject);
+
+
                 durationTime = helper.parseRouteDuration(jsonObject);
                 totalMeters = helper.parseRouteDistance(jsonObject);
+                details.add(durationTime);
+                details.add(totalMeters);
+                //return details;
                 Log.e(TAG, "Executing Routes : "/*, routes.toString()*/);
 
 
-                ArrayList<LatLng> points;
-                PolylineOptions lineOptions = null;
-
                 // Traversing through all the routes
-                for (int i = 0; i < routes.size(); i++) {
-                    points = new ArrayList<>();
-                    lineOptions = new PolylineOptions();
 
-                    // Fetching i-th route
-                    List<HashMap<String, String>> path = routes.get(i);
-
-                    // Fetching all the points in i-th route
-                    for (int j = 0; j < path.size(); j++) {
-                        HashMap<String, String> point = path.get(j);
-
-                        double lat = Double.parseDouble(point.get("lat"));
-                        double lng = Double.parseDouble(point.get("lng"));
-                        LatLng position = new LatLng(lat, lng);
-
-                        points.add(position);
-                    }
-
-                    // Adding all the points in the route to LineOptions
-                    lineOptions.addAll(points);
-                    lineOptions.width(10);
-                    lineOptions.color(Color.BLUE);
-
-                    Log.e(TAG, "PolylineOptions Decoded");
-                }
 
                 // Drawing polyline in the Google Map for the i-th route
-                if (lineOptions != null) {
-                    return lineOptions;
+                if (details.size() > 1) {
+                    return details;
                 } else {
                     return null;
                 }
@@ -168,12 +144,14 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
     }
 
     @Override
-    protected void onPostExecute(PolylineOptions polylineOptions) {
-        super.onPostExecute(polylineOptions);
-        if (resultCallback != null && polylineOptions != null) {
-            resultCallback.onPath(polylineOptions);
+    protected void onPostExecute(List<Integer> details) {
+        super.onPostExecute(details);
+        if (resultCallback != null && details != null) {
+            resultCallback.onDetails(details);
+//            resultCallback.onDistance(details.get(0));
+//            resultCallback.onDuration(details.get(1));
+
         }
 
     }
 }
-

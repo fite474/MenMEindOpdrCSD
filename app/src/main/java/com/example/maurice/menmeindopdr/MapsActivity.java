@@ -34,13 +34,17 @@ public class MapsActivity extends AppCompatActivity {
     public int selectedRoute;
     public final static String SELECTED_ROUTE_BUNDLE_TAG = "SELECTED_ROUTE_BUNDLE_TAG";
 
+    TextView duration;
+    TextView distance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
         LatLng testStation = new LatLng(getIntent().getDoubleExtra("startingStationLat", 1.1), getIntent().getDoubleExtra("startingStationLong", 1.1));
-
+        duration = findViewById(R.id.routeDuration);
+        distance = findViewById(R.id.routeDistance);
 
 //        viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
 //        viewModel.setRotationDeviceListener(this);
@@ -84,6 +88,16 @@ public class MapsActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.activityMapsFragment, mapsFragment).commit();
+
+
+    }
+
+    public void setDetailText(int totalMeters, int durationTime)
+    {
+        distance.setText("distance to go: " + totalMeters + "meters");
+        duration.setText("time to station: " + durationTime + "seconds");
+
+
     }
 
 

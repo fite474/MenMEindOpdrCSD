@@ -12,12 +12,74 @@ import java.util.List;
 
 public class DirectionHelper {
 
-    public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
+    public int parseRouteDistance(JSONObject jObject) {
+        JSONArray jRoutes;
+        JSONArray jLegs;
+        int totalMeter = 0;
+
+        JSONObject routeDistance = null;
+
+        try {
+
+            jRoutes = jObject.getJSONArray("routes");
+
+            /** Traversing all routes */
+            for (int i = 0; i < jRoutes.length(); i++) {
+                jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
+
+
+                /** Traversing all legs */
+                for (int j = 0; j < jLegs.length(); j++) {
+                    routeDistance = jLegs.getJSONObject(i).getJSONObject("distance");
+                   totalMeter = routeDistance.getInt("value");
+                }
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return totalMeter;
+    }
+
+    public int parseRouteDuration(JSONObject jObject) {
+        JSONArray jRoutes;
+        JSONArray jLegs;
+        JSONObject routeDuration = null;
+        int totalSeconds = 0;
+
+
+        try {
+
+            jRoutes = jObject.getJSONArray("routes");
+
+            /** Traversing all routes */
+            for (int i = 0; i < jRoutes.length(); i++) {
+                jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
+
+
+                /** Traversing all legs */
+                for (int j = 0; j < jLegs.length(); j++) {
+
+                    routeDuration = jLegs.getJSONObject(i).getJSONObject("duration");
+                    totalSeconds = routeDuration.getInt("value");
+                }
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return totalSeconds;
+    }
+
+        public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
         List<List<HashMap<String, String>>> routes = new ArrayList<>();
         JSONArray jRoutes;
         JSONArray jLegs;
         JSONArray jSteps;
+
 
         try {
 

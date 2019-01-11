@@ -1,9 +1,9 @@
 package com.example.maurice.menmeindopdr.DrawingRoute;
-import com.google.android.gms.maps.model.PolylineOptions;
 
-public interface DirectionPointListener {
-    public void onPath(PolylineOptions polyLine);
+import java.util.List;
+
+public interface DirectionsDetailsListener {
 //    public void onDuration(int durationSeconds);
 //    public void onDistance(int totalMeters);
+    public void onDetails(List<Integer> details);
 }
-

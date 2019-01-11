@@ -19,7 +19,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.TextView;
 
+import com.example.maurice.menmeindopdr.DrawingRoute.GetDetailsFromPath;
 import com.google.android.gms.location.LocationServices;
 import com.example.maurice.menmeindopdr.App;
 import com.example.maurice.menmeindopdr.DrawingRoute.GetPathFromLocation;
@@ -48,6 +50,7 @@ import com.google.maps.android.PolyUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -79,7 +82,12 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     //Station startStation;
     LatLng startingStation;
 
+    int totalMeters = -1;
+    int durationTime = -1;
+
     List<LatLng> toFollowRoute;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,6 +104,16 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
 
      //   toFollowRoute = new ArrayList<>(); //is voor het aangeven als je van de route afwijkt
+    }
+
+    public int getTotalMeters()
+    {
+        return totalMeters;
+    }
+
+    public int getDurationTime()
+    {
+        return durationTime;
     }
 
 
@@ -151,11 +169,15 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                             try {
 
 
-                                        new GetPathFromLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), targetStation,
+                                    new GetPathFromLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), targetStation,
                                                 polyLine -> {
                                                     addPolyLine(polyLine);
                                                 }).execute();
 
+                                    new GetDetailsFromPath(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), targetStation,
+                                            integers -> {
+                                                ((MapsActivity) getActivity()).setDetailText(integers.get(0), integers.get(1));
+                                            }).execute();
 
 
 
@@ -335,6 +357,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                                 previousLocation = currentLocation;
                                 drawLinesToMap(startingStation);
+
                             }
                             catch(Exception e){
 //                                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getContext());
@@ -438,6 +461,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 .width(5)
                 .color(Color.RED));
         previousLocation = location;
+
+
 
 //        pointsOfInterestOnLocationChanged = (ArrayList<PointOfInterest>) model.getPointOfInterests(routeSelected).getValue();
 //        PointOfInterest closestPoi = null;
