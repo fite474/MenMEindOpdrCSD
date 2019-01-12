@@ -198,4 +198,10 @@ public class StartingActivity extends AppCompatActivity implements NsListener
     {
 
     }
+
+    @Override
+    public void noJourneyAvailable()
+    {
+
+    }
 }

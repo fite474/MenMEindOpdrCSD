@@ -9,26 +9,31 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.maurice.menmeindopdr.NSData.Station;
+import com.example.maurice.menmeindopdr.NSData.TreinRit;
+import com.example.maurice.menmeindopdr.NSData.TreinType;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class RouteSelectAdapter extends ArrayAdapter<Station> {
+public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
 
-    //TextView listviewItemTitle;
-//    TextView vakantieTxt;
-//    TextView regiosTxt;
-//    TextView regiosNummersTxt;
+    ImageView trainImage;
+    TextView departureTrack;
+    TextView transfers;
+    TextView departureTime;
+    TextView arrivalTime;
+    TextView journeyDuration;
 
-    public RouteSelectAdapter(Context context, ArrayList<Station> items) {
+    public RouteSelectAdapter(Context context, ArrayList<TreinRit> items) {
         super( context, 0, items);
+
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
 
         // Mural ophalen
-        Station station = getItem(position);
+        TreinRit treinRit = getItem(position);
 
         // View aanmaken of herbruiken
         if( convertView == null ) {
@@ -38,23 +43,45 @@ public class RouteSelectAdapter extends ArrayAdapter<Station> {
                     false
             );
         }
+        if(treinRit!= null)
+        {
+            trainImage = convertView.findViewById(R.id.trainIconImageView);
+            if (treinRit.getTreinType() == TreinType.INTERCITY)
+            {
+                trainImage.setImageResource(R.drawable.trainicon_ic);
+            }
+            else
+            {
+                trainImage.setImageResource(R.drawable.trainicon_spr);
+            }
 
-        TextView listViewItemTitle = convertView.findViewById(R.id.textViewTest);
+            departureTrack = convertView.findViewById(R.id.departureTrackTextView);
+            departureTrack.setText(treinRit.getVertrekSpoor());
 
+            transfers = convertView.findViewById(R.id.transferTextView);
+            transfers.setText(treinRit.getAantalOverstappen());
 
+            departureTime = convertView.findViewById(R.id.depTimeTV);
+            departureTime.setText(String.valueOf(treinRit.getVertrektijd()));
 
-//        final ImageView image = convertView.findViewById(R.id.listviewItemImage);
-//
-//        for(int i = 0; i < blindWall.getImagesUrls().size(); i++)
-//        {
-//            String imageUrlCurr = blindWall.getImagesUrls().get(i);
-//
-//            if(imageUrlCurr.contains("_1"))
-//            {
-//
-//                Picasso.get().load(imageUrlCurr).into(image);
-//            }
-//        }
+            arrivalTime = convertView.findViewById(R.id.arrTimeTV);
+            arrivalTime.setText(String.valueOf(treinRit.getAankomsttijd()));
+
+            journeyDuration = convertView.findViewById(R.id.durTV);
+            int minutes = treinRit.getRitDuur() % 60;
+            int hours = treinRit.getRitDuur() / 60;
+
+            String ritduur = " ";
+            if(minutes < 10)
+            {
+                ritduur = hours + ":0"+minutes + " uur";
+            }
+            else
+            {
+                ritduur =hours + ":"+minutes + " uur";
+            }
+
+        }
         return convertView;
     }
 }

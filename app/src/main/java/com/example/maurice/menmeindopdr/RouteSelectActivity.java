@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.maurice.menmeindopdr.API.NSAPICallType;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
@@ -18,94 +19,62 @@ import com.example.maurice.menmeindopdr.NSData.TreinRit;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 public class RouteSelectActivity extends AppCompatActivity implements NsListener {
 
     private static final String TAG = "RouteSelectActivity";
-    // private static BlindWallsBreda blindWallsBreda;
-    ListView stationsListView;
-    ArrayAdapter stationsAdapter;
-    ArrayList<Station> stationsArray;
+    ListView journeyListView;
+    TextView beginTxtView;
+    TextView eindTxtView;
+    ArrayAdapter journeyAdapter;
+    ArrayList<TreinRit> journeyArray;
     Button testStationButton;
+    NsAPIHandler api;
+    Station startingStation;
+    Station destinationStation;
 
-    private List<Station> wallList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listview_pickroute);
-
-        testStationButton = findViewById(R.id.testStationButton);
-
+        api = new NsAPIHandler(getApplicationContext(), this);
+        startingStation = (Station) getIntent().getSerializableExtra("startStation");
+        destinationStation = (Station) getIntent().getSerializableExtra("destinationStation");
         LatLng testStation = new LatLng(51.563983, 5.079380);
-        testStationButton.setOnClickListener(v -> {
-            Intent intent = new Intent(
-                    getApplicationContext(),
-                    MapsActivity.class
-            );
-
-//            Station station = stationsArray.get(position);
-//            intent.putExtra("selectedEndStation", station);
-            intent.putExtra("startingStationLat", testStation.latitude);
-            intent.putExtra("startingStationLong", testStation.longitude);
-
-
-            startActivity(intent);
-        });
-
-        String endingStation = getIntent().getStringExtra("gezochtStation");
-        String startingStation = getIntent().getStringExtra("startingStation");
-
+        beginTxtView = findViewById(R.id.beginStationTxt);
+        eindTxtView = findViewById(R.id.eindStationTxt);
+        beginTxtView.setText("van:  "+startingStation.getName());
+        eindTxtView.setText("naar: "+destinationStation.getName());
 
         //TODO ending station vergegelijken en routes zoeken voor de listview
 
-//
-//        String json = JsonUtil.loadJSONFromAsset(MainActivity.this);
-////        Log.d(TAG, "onCreate: json from asset " + json );
-//
-//        blindWallsBreda = BlindWallsBreda.createFromJson(json);
-//
-//        Log.d(TAG, "onCreate: " + blindWallsBreda);
-//        displayBlindWalls();
-//    }
-//
-//    private void displayBlindWalls() {
-//        TextView blindWallsTextView = findViewById(R.id.activity_main_text_id);
-//        blindWallsTextView.setText(blindWallsBreda.printAllWalls());
-        stationsArray = new ArrayList<>();
-        stationsListView = (ListView) findViewById(R.id.stationListView);
 
-        stationsAdapter = new RouteSelectAdapter(
+        journeyArray = new ArrayList<>();
+        journeyArray = (ArrayList<TreinRit>) getIntent().getSerializableExtra("ritten");
+        journeyListView = (ListView) findViewById(R.id.journeysListView);
+
+        journeyAdapter = new RouteSelectAdapter(
                 getApplicationContext(),
-                stationsArray
+                journeyArray
         );
+        journeyListView.setAdapter(journeyAdapter);
 
-
-
-        stationsListView.setAdapter(stationsAdapter);
-
-
-        NsAPIHandler api = new NsAPIHandler(
-                this.getApplicationContext(),
-                this);
-        api.HandleAPICall(NSAPICallType.FIND_STATIONS, null, null);
-
-        stationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        journeyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("BLINDWALL-TAG", "" + position);
-
+                Log.i("JOURNEY-TAG", "" + position);
 
                 Intent intent = new Intent(
                         getApplicationContext(),
                         MapsActivity.class
                 );
 
-                Station station = stationsArray.get(position);
-                //intent.putExtra("selectedEndStation", station);
-                intent.putExtra("startingStationLat", testStation.latitude);
-                intent.putExtra("startingStationLong", testStation.longitude);
+                TreinRit treinRit = journeyArray.get(position);
+                intent.putExtra("startingStationLat", startingStation.getLatitude());
+                intent.putExtra("startingStationLong", startingStation.getLongitude());
 
 
                 startActivity(intent);
@@ -114,6 +83,8 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
 
 
     }
+
+
 
     @Override
     public void onStationsAvailable(ArrayList<Station> stations)
@@ -129,6 +100,12 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
 
     @Override
     public void onJourneysAvailable(ArrayList<TreinRit> ritten)
+    {
+        this.journeyArray = ritten;
+    }
+
+    @Override
+    public void noJourneyAvailable()
     {
 
     }

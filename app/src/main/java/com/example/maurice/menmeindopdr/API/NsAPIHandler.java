@@ -112,7 +112,7 @@ public class NsAPIHandler  implements Serializable {
                             else{type = TreinType.SPRINTER;}
 
 
-                            TreinRit rit = new TreinRit(duration, transfers, vertrekTijd, aankomstTijd, type);
+                            TreinRit rit = new TreinRit(duration, transfers, vertrekTijd, aankomstTijd, type, departureTrack);
                             ritten.add(rit);
                         }
 
@@ -131,7 +131,7 @@ public class NsAPIHandler  implements Serializable {
                 },
                 (Response.ErrorListener) response ->
                 {
-                    Log.d("JOURNEYERROR", "YOU'RE NOT GOING ON AN ADVENTURE");
+
                 }
         )
         {
@@ -165,7 +165,6 @@ public class NsAPIHandler  implements Serializable {
                             JSONArray payload = response.getJSONArray("payload");
                             for(int i = 0; i < payload.length(); i++)
                             {
-                                Log.d("Handling station: ", String.valueOf(i));
                                 StationType type;
 
                                 JSONObject stationJson = payload.getJSONObject(i);
@@ -202,7 +201,7 @@ public class NsAPIHandler  implements Serializable {
                     @Override
                     public void onErrorResponse(VolleyError error)
                     {
-                        Log.d("ERROR_GETTING_STATIONS", "Kan stations niet vinden pleurislijer");
+
                         listener.noStationAvailable();
                     }
                 })
@@ -217,65 +216,8 @@ public class NsAPIHandler  implements Serializable {
             }
         };
         queue.add(request);
-
-
-
-
-
-
     }
 
-//    private void getSingleLight(String lightID)
-//    {
-//
-//        String url = basicUrl + "/lights/" + lightID;
-//        JsonObjectRequest singleLightRequest = new JsonObjectRequest(
-//                DownloadManager.Request.Method.GET,
-//                url,
-//                null,
-//                new Response.Listener<JSONObject>()
-//                {
-//                    @Override
-//                    public void onResponse(JSONObject response)
-//                    {
-//                        Log.i("tag", "msg");
-//                        Lamp lamp = new Lamp(response);
-//
-//                        listener.onLampAvailable(lamp);
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.i("NRA", "NOT OK");
-//                        listener.onLampWallError(error.toString());
-//                    }
-//                }
-//        );
-//        this.queue.add(singleLightRequest);
-//        System.out.println("------------------------------------------------------");
-//    }
-//
-//    private void setSingleLight(String lightID, JSONObject body)
-//    {
-//        String url = basicUrl+"/lights/"+lightID+ "/state";
-//        JsonObjectRequest setLightRequest = new JsonObjectRequest(
-//                Request.Method.PUT,
-//                url,
-//                body,
-//                new Response.Listener<JSONObject>()
-//                {
-//                    @Override
-//                    public void onResponse(JSONObject response)
-//                    {
-//                        System.out.println(response.toString());
-//                    }
-//                },
-//                null
-//        );
-//        this.queue.add(setLightRequest);
-//    }
 
     private String makeJourneyUrl(String from, String to)
     {

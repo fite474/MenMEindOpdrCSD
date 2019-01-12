@@ -12,13 +12,14 @@ public class TreinRit implements Serializable
     private TreinType treinType;
     private String vertrekSpoor;
 
-    public TreinRit(int ritDuur, int aantalOverstappen, Date vertrektijd, Date aankomsttijd, TreinType eersteTrein)
+    public TreinRit(int ritDuur, int aantalOverstappen, Date vertrektijd, Date aankomsttijd, TreinType eersteTrein, String vertrekSpoor)
     {
         this.ritDuur = ritDuur;
         this.aantalOverstappen = aantalOverstappen;
         this.vertrektijd = vertrektijd;
         this.aankomsttijd = aankomsttijd;
         treinType = eersteTrein;
+        this.vertrekSpoor = vertrekSpoor;
 
     }
 

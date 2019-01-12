@@ -9,6 +9,8 @@ public interface NsListener {
     public void onStationsAvailable(ArrayList<Station> stations);
     void noStationAvailable();
     void onJourneysAvailable(ArrayList<TreinRit> ritten);
+    void noJourneyAvailable();
+
 
 
 
