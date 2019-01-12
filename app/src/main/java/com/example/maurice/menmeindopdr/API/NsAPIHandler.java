@@ -1,8 +1,6 @@
 package com.example.maurice.menmeindopdr.API;
 
-import android.app.DownloadManager;
 import android.content.Context;
-import android.os.Parcel;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -23,10 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,7 +58,7 @@ public class NsAPIHandler  implements Serializable {
                 if(codeFromStation != null && codeToStation != null)
                     findJourneys(makeJourneyUrl(codeFromStation, codeToStation));
                 break;
-            case FIND_NEARBY_STATION:
+            case FIND_STATIONS:
                 getStations();
                 break;
             case FIND_TRAIN:
@@ -85,8 +81,6 @@ public class NsAPIHandler  implements Serializable {
                         JSONArray trips = response.getJSONArray("trips");
                         for(int i = 0; i < trips.length(); i++)
                         {
-                            Log.d("Handling rit: ", String.valueOf(i));
-
                             JSONObject jsonRit = trips.getJSONObject(i);
                             int duration = jsonRit.getInt("plannedDurationInMinutes");
                             int transfers = jsonRit.getInt("transfers");

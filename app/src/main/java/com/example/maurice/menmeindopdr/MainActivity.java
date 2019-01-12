@@ -4,77 +4,109 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
+import com.example.maurice.menmeindopdr.API.NSAPICallType;
+import com.example.maurice.menmeindopdr.API.NsAPIHandler;
+import com.example.maurice.menmeindopdr.API.NsListener;
 import com.example.maurice.menmeindopdr.NSData.Station;
+import com.example.maurice.menmeindopdr.NSData.TreinRit;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements NsListener
+{
+    NsAPIHandler api;
     Button zoekStationButton;
-    TextView currentLocation;
+    TextView searchedStation;
     LatLng currentDeviceLocation;
     EditText gezochtStation;
     Station closestStation;
     Location closestLocation;
+    ArrayList<Station> stations;
+    TextView foundStation;
+    ImageView backgr;
 
-
+    MultiAutoCompleteTextView completeTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        this.api = new NsAPIHandler(getApplicationContext(), this);
         currentDeviceLocation = new LatLng(getIntent().getDoubleExtra("currentLocationLat", 1.0),
                 getIntent().getDoubleExtra("currentLocationLong", 1.0));
         closestStation = (Station) getIntent().getSerializableExtra("closestStation");
         zoekStationButton = findViewById(R.id.zoekStationButton);
-        currentLocation = findViewById(R.id.currentLocation);
+        searchedStation = findViewById(R.id.foundStationTV);
+        foundStation = findViewById(R.id.closestStationTextview);
+        foundStation.setText(closestStation.getName());
+        backgr = findViewById(R.id.foundImageView);
+        backgr.setImageResource(R.drawable.found_station);
+        gezochtStation = findViewById(R.id.searchStation);
 
-        currentLocation.setText(closestStation.getName());
 
+
+
+        this.stations = new ArrayList<>();
+        api.HandleAPICall(NSAPICallType.FIND_STATIONS, null,null);
 
 
 
         zoekStationButton.setOnClickListener(v -> {
-            final String stationToEnd = String.valueOf(zoekStationButton.getText());
-            final String startingStation = "";//TODO get starting/ closest station
-            Intent intent = new Intent(
-                    getApplicationContext(),
-                    RouteSelectActivity.class
-            );
-            intent.putExtra("gezochtStation", stationToEnd);
-            intent.putExtra("startingStation", startingStation);
-            //intent.putExtra(INTENT_TAG_SELECT_ROUTE, SelectedRoute.HISTORIC_KM);
-            startActivity(intent);
+            final String startingStation = closestStation.getName().toLowerCase();
+            if(String.valueOf(gezochtStation.getText()) != null)
+            {
+                final String stationToEnd = String.valueOf(zoekStationButton.getText()).toLowerCase();
+                boolean validStation = false;
+                boolean doneSearching = false;
+                int i = 0;
+                while(!validStation && !doneSearching)
+                {
+                    Station currStation = stations.get(i);
+                    if (currStation.getName().toLowerCase().contains(stationToEnd))
+                    {
+                        validStation = true;
+                    }
+
+                    if (i == stations.size() - 1)
+                    {
+                        doneSearching = true;
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                    searchedStation.setText(String.valueOf(i));
+                }
+
+
+                if(validStation)
+                {
+
+                    Intent intent = new Intent(
+                            getApplicationContext(),
+                            RouteSelectActivity.class
+                    );
+                    intent.putExtra("gezochtStation", stationToEnd);
+                    intent.putExtra("startingStation", startingStation);
+                    startActivity(intent);
+                }
+                else
+                {
+                    searchedStation.setText("Station niet gevonden");
+                }
+            }
+            else
+            {
+                searchedStation.setText("Voer eerst een station in");
+            }
+
         });
-
-//        zoekStationButton.setOnClickListener(v -> {
-//            Intent intent = new Intent(
-//                    getApplicationContext(),
-//                    MapsActivity.class
-//            );
-//            //intent.putExtra(INTENT_TAG_SELECT_ROUTE, SelectedRoute.HISTORIC_KM);
-//            startActivity(intent);
-//        });
-
-
-//        stationsArray = new ArrayList<>();
-//        stationsListView = (ListView) findViewById(R.id.);
-//
-//        blindWallsAdapter = new BlindWallsAdapter(
-//                getApplicationContext(),
-//                blindWallsArray
-//        );
-//
-//
-//
-//        listView.setAdapter(blindWallsAdapter);
 
     }
 
@@ -84,4 +116,24 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onStationsAvailable(ArrayList<Station> stations)
+    {
+        this.stations = stations;
+    }
+
+    @Override
+    public void noStationAvailable()
+    {
+
+    }
+
+    @Override
+    public void onJourneysAvailable(ArrayList<TreinRit> ritten)
+    {
+
+    }
+
+
 }

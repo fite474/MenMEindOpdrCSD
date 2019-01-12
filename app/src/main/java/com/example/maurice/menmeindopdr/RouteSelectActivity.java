@@ -89,7 +89,7 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
         NsAPIHandler api = new NsAPIHandler(
                 this.getApplicationContext(),
                 this);
-        api.HandleAPICall(NSAPICallType.FIND_NEARBY_STATION, null, null);
+        api.HandleAPICall(NSAPICallType.FIND_STATIONS, null, null);
 
         stationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

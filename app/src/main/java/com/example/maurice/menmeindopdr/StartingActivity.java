@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.maurice.menmeindopdr.API.NSAPICallType;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
@@ -21,12 +20,10 @@ import com.example.maurice.menmeindopdr.NSData.Station;
 import com.example.maurice.menmeindopdr.NSData.TreinRit;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
-import java.util.Timer;
 
 public class StartingActivity extends AppCompatActivity implements NsListener
 {
@@ -61,7 +58,6 @@ public class StartingActivity extends AppCompatActivity implements NsListener
 
 
     }
-
 
     private void startNextActivity(Station closestStation, Location closestLocation)
     {
@@ -120,8 +116,8 @@ public class StartingActivity extends AppCompatActivity implements NsListener
                             try {
                                 Log.d(TAG, "onComplete: ");
                                 currentLocation = (Location) task.getResult();
-                                api.HandleAPICall(NSAPICallType.FIND_NEARBY_STATION,  null, null);
-                                //moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                                api.HandleAPICall(NSAPICallType.FIND_STATIONS,  null, null);
+                                //moveCamera(new LatLng(searchedStation.getLatitude(), searchedStation.getLongitude()), DEFAULT_ZOOM);
                             }
                             catch(Exception e){
 //                                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getContext());
