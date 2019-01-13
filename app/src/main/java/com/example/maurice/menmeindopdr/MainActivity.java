@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements NsListener
         foundStationListView.setAdapter(adapter);
 
         zoekStationButton.setOnClickListener(v -> {
+            gezochtStation.onEditorAction(EditorInfo.IME_ACTION_DONE);
 //            final String startingStation = closestStation.getName().toLowerCase();
             if(gezochtStation.getText().length() >=1)
             {

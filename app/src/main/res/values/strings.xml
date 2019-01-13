@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Nmata</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_maps" translatable="false">Map</string>
 
-    <string name="title_activity_startup">StartupActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_startup" translatable="false">StartupActivity</string>
+    <string name="dummy_button" translatable="false">Dummy Button</string>
+    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
 
-    <string name="title_activity_starting">StartingActivity</string>
-    <string name="google_maps_key">AIzaSyBVk7nQvI9otpHGsGr6vLBb_4y8MYrNc5Q</string>
+    <string name="title_activity_starting" translatable="false">StartingActivity</string>
+    <string name="google_maps_key" translatable="false">AIzaSyBVk7nQvI9otpHGsGr6vLBb_4y8MYrNc5Q</string>
 </resources>

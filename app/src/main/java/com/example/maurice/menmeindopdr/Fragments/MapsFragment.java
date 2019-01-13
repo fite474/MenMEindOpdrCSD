@@ -160,7 +160,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
                                     new GetDetailsFromPath(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), targetStation,
                                             integers -> {
-                                                ((MapsActivity) getActivity()).setDetailText(integers.get(0), integers.get(1));
+                                                ((MapsActivity) Objects.requireNonNull(getActivity())).setDetailText(integers.get(0), integers.get(1));
                                             }).execute();
 
 
@@ -256,32 +256,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         }
     }
 
-    private void setMarkers() {
-//        Log.d(TAG, "setMarkers: " + routeSelected);
-//        switch(routeSelected){
-//            case SelectedRoute.BLIND_WALLS:
-//                model.getPointOfInterests(routeSelected).observe(this, pointOfInterests -> {
-//                    if(pointOfInterests != null && !pointOfInterests.isEmpty()) {
-//                        addBlindWallsToMap(pointOfInterests);
-//                        this.pointsOfInterest = pointOfInterests;
-//                        Log.d(TAG, "setMarkers: " + pointOfInterests);
-//                        drawLinesToMap(pointOfInterests);
-//                    }
-//                });
-//                break;
-//
-//            case SelectedRoute.HISTORIC_KM:
-//                model.getPointOfInterests(routeSelected).observe(this, pointOfInterests -> {
-//                    if(pointOfInterests != null && !pointOfInterests.isEmpty()){
-//                        addHistoricsToMap(pointOfInterests);
-//                        this.pointsOfInterest = pointOfInterests;
-//                        Log.d(TAG, "setMarkers: " + pointOfInterests);
-//                        drawLinesToMap(pointOfInterests);
-//                    }
-//                });
-//                break;
-        //}
-    }
+
 
 
 
@@ -440,8 +415,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     @Override
     public void onLocationChanged(Location location) {
-        if(previousLocation != null)
-        {
+        if (previousLocation != null) {
             addPolyLine(new PolylineOptions()
                     .add(new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
                             new LatLng(location.getLatitude(), location.getLongitude()))
@@ -454,68 +428,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         map.clear();
         drawLinesToMap(startingStation);
 
-//        pointsOfInterestOnLocationChanged = (ArrayList<PointOfInterest>) model.getPointOfInterests(routeSelected).getValue();
-//        PointOfInterest closestPoi = null;
-//        float distance = 1000;
-//        boolean newPoiVisit = false;
-//        for(PointOfInterest poi : pointsOfInterest){
-//            Location poiLocation = new Location(poi.getName());
-//            poiLocation.setLatitude(poi.getLatitude());
-//            poiLocation.setLongitude(poi.getLongitude());
-//            if(location.distanceTo(poiLocation) < 25 && location.distanceTo(poiLocation) < distance && !poi.isVisited()){
-//                closestPoi = poi;
-//                distance = location.distanceTo(poiLocation);
-////                newPoiVisit = true;
-//            }
-//        }
-//
-//
-//
-//        if(closestPoi != null){
-//            for(Marker marker : mapMarkers){
-//                if(marker.getTag().equals(closestPoi.getId())){
-//                    marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//                    marker.showInfoWindow();
-//                    notificationService.sendNotification(marker.getTitle(), closestPoi, routeSelected);
-//
-//                    for (PointOfInterest pointOfInterest : model.getPointOfInterests(routeSelected).getValue()){
-//                        if (closestPoi.getName().equals(pointOfInterest.getName()))
-//                            pointOfInterest.setVisited(true);
-//                        newPoiVisit = true;
-//                    }
-//                }
-//            }
-//        }
-//
-//        if(newPoiVisit)
-//        {
-//            Intent intent = new Intent(
-//                    App.getContext(),
-//                    DetailedActivity.class
-//            );
-//
-//            Bundle b = new Bundle();
-//            b.putInt("selected_route", routeSelected);
-//            b.putSerializable("clicked_poi", closestPoi);
-//            b.putString("clicked_name", closestPoi.getName());
-//
-//            intent.putExtra("bundle_poi", b);
-//
-//            startActivity(intent);
-
-        }
-
-
-//        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-//
-//
-//        if(PolyUtil.isLocationOnEdge(currentLocation, toFollowRoute, true, 45))
-//        {
-//            System.out.println("\n\n\n\n\n TESTTTTTTTT \n\n\n\n\n\n\n\n");
-//
-//            //Toast.makeText(getActivity(), "loop terug naar de route!",
-//            //Toast.LENGTH_LONG).show();
-//        }
+    }
 
 
 
@@ -534,9 +447,6 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         Log.d(TAG, "onStatusChanged: " + provider);
     }
 
-    //public List<PointOfInterest> getPointsOfInterest() {
-//        return pointsOfInterest;
-//    }
 
 
 }

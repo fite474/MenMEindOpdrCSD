@@ -112,16 +112,5 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
 
     }
 
-//    @Override
-//    public void onBlindWallAvailable(BlindWall blindWall) {
-//        Log.i("", "");
-//
-//        blindWallsArray.add(blindWall);
-//        blindWallsAdapter.notifyDataSetChanged();
-//    }
-//
-//    @Override
-//    public void onBlindWallError(String errorString) {
-//        Log.i("","");
-//    }
+
 }
