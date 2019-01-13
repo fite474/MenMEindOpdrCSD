@@ -29,7 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NsAPIHandler  implements Serializable {
+public class NsAPIHandler  implements Serializable
+{
 
     Context context;
     RequestQueue queue;
@@ -37,7 +38,8 @@ public class NsAPIHandler  implements Serializable {
     private String basicUrl;
     private List<Station> allStations;
 
-    public NsAPIHandler(Context context, NsListener listener) {
+    public NsAPIHandler(Context context, NsListener listener)
+    {
         this.allStations = new ArrayList<>();
         this.context = context;
         queue = Volley.newRequestQueue(context.getApplicationContext());
@@ -48,14 +50,12 @@ public class NsAPIHandler  implements Serializable {
     }
 
 
-
-
     public void HandleAPICall(NSAPICallType type, @Nullable String codeFromStation, @Nullable String codeToStation)
     {
-        switch(type)
+        switch (type)
         {
             case FROM_TO_REQUEST:
-                if(codeFromStation != null && codeToStation != null)
+                if (codeFromStation != null && codeToStation != null)
                     findJourneys(makeJourneyUrl(codeFromStation, codeToStation));
                 break;
             case FIND_STATIONS:
@@ -65,32 +65,37 @@ public class NsAPIHandler  implements Serializable {
 
                 break;
 
-            default:break;
+            default:
+                break;
         }
     }
 
     private void findJourneys(String url)
     {
+//        JSONObject parameters makeJsonParams();
         JsonObjectRequest journeyRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 null,
                 (Response.Listener<JSONObject>) response -> {
                     try
                     {
+                        Log.d("journey-RESPONSE", response.toString());
                         ArrayList<TreinRit> ritten = new ArrayList<>();
                         JSONArray trips = response.getJSONArray("trips");
-                        for(int i = 0; i < trips.length(); i++)
+                        for (int i = 0; i < trips.length(); i++)
                         {
                             JSONObject jsonRit = trips.getJSONObject(i);
                             int duration = jsonRit.getInt("plannedDurationInMinutes");
                             int transfers = jsonRit.getInt("transfers");
                             JSONArray legs = jsonRit.getJSONArray("legs");
-                            JSONObject startLeg = legs.getJSONObject(0).getJSONObject("origin");
+                            JSONObject startLeg = legs.getJSONObject(0);
                             String treintype = startLeg.getJSONObject("product").getString("categoryCode");
-                            String departureTrack = startLeg.getString("plannedTrack");
-                            String departureTime = startLeg.getString("actualDateTime");
+                            JSONObject origin = startLeg.getJSONObject("origin");
+
+                            String departureTrack = origin.getString("plannedTrack");
+                            String departureTime = origin.getString("plannedDateTime");
                             JSONObject endleg;
-                            if(transfers > 0)
+                            if (transfers > 0)
                             {
                                 endleg = legs.getJSONObject(transfers);
                             }
@@ -98,18 +103,24 @@ public class NsAPIHandler  implements Serializable {
                             {
                                 endleg = startLeg;
                             }
-                            String arrivalTime = endleg.getJSONObject("destination").getString("actualDateTime");
+                            String arrivalTime = endleg.getJSONObject("destination").getString("plannedDateTime");
 
                             int plusIndex = arrivalTime.indexOf('+');
-                            String cutArrivalTime = arrivalTime.substring(0, plusIndex-1);
-                            String cutDepartTime = departureTime.substring(0, plusIndex-1);
+                            String cutArrivalTime = arrivalTime.substring(0, plusIndex - 1);
+                            String cutDepartTime = departureTime.substring(0, plusIndex - 1);
 
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd'T'hh:mm:ss");
                             Date vertrekTijd = format.parse(cutDepartTime);
                             Date aankomstTijd = format.parse(cutArrivalTime);
                             TreinType type;
-                            if(treintype.equals("IC")){type = TreinType.INTERCITY;}
-                            else{type = TreinType.SPRINTER;}
+                            if (treintype.equals("IC"))
+                            {
+                                type = TreinType.INTERCITY;
+                            }
+                            else
+                            {
+                                type = TreinType.SPRINTER;
+                            }
 
 
                             TreinRit rit = new TreinRit(duration, transfers, vertrekTijd, aankomstTijd, type, departureTrack);
@@ -117,7 +128,6 @@ public class NsAPIHandler  implements Serializable {
                         }
 
                         listener.onJourneysAvailable(ritten);
-
 
 
                     } catch (JSONException e)
@@ -131,7 +141,7 @@ public class NsAPIHandler  implements Serializable {
                 },
                 (Response.ErrorListener) response ->
                 {
-
+                    listener.noJourneyAvailable();
                 }
         )
         {
@@ -146,6 +156,22 @@ public class NsAPIHandler  implements Serializable {
         queue.add(journeyRequest);
     }
 
+//    private JSONObject makeJsonParams()
+//    {
+//        JSONObject parameters = new JSONObject();
+//        try
+//        {
+//            parameters.put("travelClass", 2);
+//            parameters.put("originTransit", false);
+//            parameters.put("originWalk", false);
+//            parameters.put("originBike", false);
+//            parameters.put("originCar", false);
+//            parameters.put("")
+//        } catch (JSONException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     private void getStations()
@@ -163,14 +189,14 @@ public class NsAPIHandler  implements Serializable {
                         {
                             ArrayList<Station> stations = new ArrayList<>();
                             JSONArray payload = response.getJSONArray("payload");
-                            for(int i = 0; i < payload.length(); i++)
+                            for (int i = 0; i < payload.length(); i++)
                             {
                                 StationType type;
 
                                 JSONObject stationJson = payload.getJSONObject(i);
                                 String code = stationJson.getString("code");
                                 String stationType = stationJson.getString("stationType");
-                                if(stationType == "STOPTREIN_STATION")
+                                if (stationType == "STOPTREIN_STATION")
                                 {
                                     type = StationType.STOP_STATION;
                                 }
@@ -221,9 +247,6 @@ public class NsAPIHandler  implements Serializable {
 
     private String makeJourneyUrl(String from, String to)
     {
-        return basicUrl + "/v3/trips?travelClass=2&originTransit=false&originWalk=false&originBike=false"
-                +"&originCar=false&travelAssistanceTransferTime=0&searchForAccessibleTrip=false&destinationTransit=false"
-                +"&destinationWalk=false&destinationBike=false&destinationCar=false&excludeHighSpeedTrains=false"
-                +"&excludeReservationRequired=false&passing=false&fromStation=" + from + "&toStation=" + to;
+        return basicUrl + "/v3/trips?fromStation=" + from.toLowerCase() + "&toStation=" + to.toLowerCase();
     }
 }

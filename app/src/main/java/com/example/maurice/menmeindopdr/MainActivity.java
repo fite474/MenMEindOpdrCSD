@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements NsListener
     public void onJourneysAvailable(ArrayList<TreinRit> ritten)
     {
         this.ritten = ritten;
+        searchedStation.setText("Ritten gevonden!");
         new Handler().postDelayed(new Runnable()
         {
             @Override

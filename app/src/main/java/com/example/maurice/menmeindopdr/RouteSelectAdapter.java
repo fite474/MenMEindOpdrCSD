@@ -18,6 +18,8 @@ import java.util.ArrayList;
 public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
 
     ImageView trainImage;
+    ImageView trackImage;
+    ImageView transferImage;
     TextView departureTrack;
     TextView transfers;
     TextView departureTime;
@@ -55,17 +57,41 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
                 trainImage.setImageResource(R.drawable.trainicon_spr);
             }
 
+            trackImage = convertView.findViewById(R.id.trackImageView);
+            trackImage.setImageResource(R.drawable.track);
+
+            transferImage = convertView.findViewById(R.id.transferImageView);
+            transferImage.setImageResource(R.drawable.transfer);
+
             departureTrack = convertView.findViewById(R.id.departureTrackTextView);
             departureTrack.setText(treinRit.getVertrekSpoor());
 
             transfers = convertView.findViewById(R.id.transferTextView);
-            transfers.setText(treinRit.getAantalOverstappen());
+            transfers.setText(String.valueOf(treinRit.getAantalOverstappen()));
 
             departureTime = convertView.findViewById(R.id.depTimeTV);
-            departureTime.setText(String.valueOf(treinRit.getVertrektijd()));
+            String departuretime = "";
+            if(treinRit.getVertrektijd().getMinutes() < 10)
+            {
+                departuretime = ""+ treinRit.getVertrektijd().getHours() + ":0" + treinRit.getVertrektijd().getMinutes();
+            }
+            else
+            {
+                departuretime = ""+ treinRit.getVertrektijd().getHours() + ":"+ treinRit.getVertrektijd().getMinutes();
+            }
+            departureTime.setText(departuretime);
 
             arrivalTime = convertView.findViewById(R.id.arrTimeTV);
-            arrivalTime.setText(String.valueOf(treinRit.getAankomsttijd()));
+            String arrivaltime = "";
+            if(treinRit.getAankomsttijd().getMinutes() < 10)
+            {
+                arrivaltime = ""+ treinRit.getAankomsttijd().getHours() + ":0" + treinRit.getAankomsttijd().getMinutes();
+            }
+            else
+            {
+                arrivaltime = ""+ treinRit.getAankomsttijd().getHours() + ":"+ treinRit.getAankomsttijd().getMinutes();
+            }
+            arrivalTime.setText(arrivaltime);
 
             journeyDuration = convertView.findViewById(R.id.durTV);
             int minutes = treinRit.getRitDuur() % 60;
@@ -80,6 +106,7 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
             {
                 ritduur =hours + ":"+minutes + " uur";
             }
+            journeyDuration.setText(ritduur);
 
         }
         return convertView;
