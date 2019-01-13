@@ -1,58 +1,40 @@
 package com.example.maurice.menmeindopdr.Fragments;
 
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.example.maurice.menmeindopdr.DrawingRoute.GetDetailsFromPath;
-import com.example.maurice.menmeindopdr.NSData.TreinRit;
+import com.example.maurice.menmeindopdr.NSData.TreinReis;
 import com.google.android.gms.location.LocationServices;
 import com.example.maurice.menmeindopdr.App;
 import com.example.maurice.menmeindopdr.DrawingRoute.GetPathFromLocation;
 import com.example.maurice.menmeindopdr.MapsActivity;
-import com.example.maurice.menmeindopdr.NSData.Station;
-import com.example.maurice.menmeindopdr.R;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -82,7 +64,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     GetPathFromLocation getPathFromLocation;
     //Station startStation;
     LatLng startingStation;
-    TreinRit chosenTreinRit;
+    TreinReis chosenTreinReis;
 
     int totalMeters = -1;
     int durationTime = -1;

@@ -9,14 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.maurice.menmeindopdr.NSData.Station;
-import com.example.maurice.menmeindopdr.NSData.TreinRit;
+import com.example.maurice.menmeindopdr.NSData.TreinReis;
 import com.example.maurice.menmeindopdr.NSData.TreinType;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
+public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
 
     ImageView trainImage;
     ImageView trackImage;
@@ -28,7 +26,7 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
     TextView journeyDuration;
     TextView destination;
 
-    public RouteSelectAdapter(Context context, ArrayList<TreinRit> items) {
+    public RouteSelectAdapter(Context context, ArrayList<TreinReis> items) {
         super( context, 0, items);
 
     }
@@ -37,7 +35,7 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
     public View getView(int position, View convertView, ViewGroup parent){
 
         // Mural ophalen
-        TreinRit treinRit = getItem(position);
+        TreinReis treinReis = getItem(position);
 
         // View aanmaken of herbruiken
         if( convertView == null ) {
@@ -47,13 +45,13 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
                     false
             );
         }
-        if(treinRit!= null)
+        if(treinReis != null)
         {
             destination = convertView.findViewById(R.id.destinationTV);
-            destination.setText(treinRit.getFirstDestination());
+            destination.setText(treinReis.getFirstDestination());
 
-            trainImage = convertView.findViewById(R.id.trainIcon);
-            if (treinRit.getTreinType() == TreinType.INTERCITY)
+            trainImage = convertView.findViewById(R.id.trainIconDetail);
+            if (treinReis.getLegs().get(0).getType() == TreinType.INTERCITY)
             {
                 trainImage.setImageResource(R.drawable.trainicon_ic);
             }
@@ -69,40 +67,40 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
             transferImage.setImageResource(R.drawable.transfer);
 
             departureTrack = convertView.findViewById(R.id.trackText);
-            departureTrack.setText(treinRit.getVertrekSpoor());
+            departureTrack.setText(treinReis.getVertrekSpoor());
 
             transfers = convertView.findViewById(R.id.transferText);
-            transfers.setText(String.valueOf(treinRit.getAantalOverstappen()));
+            transfers.setText(String.valueOf(treinReis.getAantalOverstappen()));
 
             departureTime = convertView.findViewById(R.id.depTimeTextView);
             String departuretime = "";
-            if(treinRit.getVertrektijd().getMinutes() < 10)
+            if(treinReis.getVertrektijd().getMinutes() < 10)
             {
-                departuretime = ""+ treinRit.getVertrektijd().getHours() + ":0" + treinRit.getVertrektijd().getMinutes();
-                Log.d("VERTREKTIJDTAGGGG", String.valueOf(treinRit.getVertrektijd().getHours()));
+                departuretime = ""+ treinReis.getVertrektijd().getHours() + ":0" + treinReis.getVertrektijd().getMinutes();
+                Log.d("VERTREKTIJDTAGGGG", String.valueOf(treinReis.getVertrektijd().getHours()));
             }
             else
             {
-                departuretime = ""+ treinRit.getVertrektijd().getHours() + ":"+ treinRit.getVertrektijd().getMinutes();
-                Log.d("VERTREKTIJDTAGGGG", String.valueOf(treinRit.getVertrektijd().getHours()));
+                departuretime = ""+ treinReis.getVertrektijd().getHours() + ":"+ treinReis.getVertrektijd().getMinutes();
+                Log.d("VERTREKTIJDTAGGGG", String.valueOf(treinReis.getVertrektijd().getHours()));
             }
             departureTime.setText(departuretime);
 
             arrivalTime = convertView.findViewById(R.id.arrTimeTV);
             String arrivaltime = "";
-            if(treinRit.getAankomsttijd().getMinutes() < 10)
+            if(treinReis.getAankomsttijd().getMinutes() < 10)
             {
-                arrivaltime = ""+ treinRit.getAankomsttijd().getHours() + ":0" + treinRit.getAankomsttijd().getMinutes();
+                arrivaltime = ""+ treinReis.getAankomsttijd().getHours() + ":0" + treinReis.getAankomsttijd().getMinutes();
             }
             else
             {
-                arrivaltime = ""+ treinRit.getAankomsttijd().getHours() + ":"+ treinRit.getAankomsttijd().getMinutes();
+                arrivaltime = ""+ treinReis.getAankomsttijd().getHours() + ":"+ treinReis.getAankomsttijd().getMinutes();
             }
             arrivalTime.setText(arrivaltime);
 
             journeyDuration = convertView.findViewById(R.id.durTV);
-            int minutes = treinRit.getRitDuur() % 60;
-            int hours = treinRit.getRitDuur() / 60;
+            int minutes = treinReis.getRitDuur() % 60;
+            int hours = treinReis.getRitDuur() / 60;
 
             String ritduur = " ";
             if(minutes < 10)

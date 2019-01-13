@@ -17,7 +17,7 @@ import com.example.maurice.menmeindopdr.API.NSAPICallType;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
 import com.example.maurice.menmeindopdr.API.NsListener;
 import com.example.maurice.menmeindopdr.NSData.Station;
-import com.example.maurice.menmeindopdr.NSData.TreinRit;
+import com.example.maurice.menmeindopdr.NSData.TreinReis;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -194,7 +194,7 @@ public class StartingActivity extends AppCompatActivity implements NsListener
     }
 
     @Override
-    public void onJourneysAvailable(ArrayList<TreinRit> ritten)
+    public void onJourneysAvailable(ArrayList<TreinReis> ritten)
     {
 
     }

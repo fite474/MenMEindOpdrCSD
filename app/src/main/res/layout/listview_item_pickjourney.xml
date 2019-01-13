@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/trainIcon"
+        android:id="@+id/trainIconDetail"
         android:layout_width="0dp"
         android:layout_height="75dp"
         android:layout_marginStart="16dp"
@@ -26,8 +26,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/trainIcon"
-        app:layout_constraintTop_toBottomOf="@+id/trainIcon"
+        app:layout_constraintStart_toStartOf="@+id/trainIconDetail"
+        app:layout_constraintTop_toBottomOf="@+id/trainIconDetail"
         tools:srcCompat="@drawable/track" />
 
     <ImageView
@@ -36,7 +36,7 @@
         android:layout_height="30dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/trackIcon"
-        app:layout_constraintEnd_toEndOf="@+id/trainIcon"
+        app:layout_constraintEnd_toEndOf="@+id/trainIconDetail"
         app:layout_constraintTop_toTopOf="@+id/trackIcon"
         app:srcCompat="@drawable/transfer" />
 
@@ -200,8 +200,8 @@
         android:layout_marginEnd="2dp"
         android:text="destination"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        app:layout_constraintBottom_toTopOf="@+id/trainIcon"
-        app:layout_constraintEnd_toEndOf="@+id/trainIcon"
-        app:layout_constraintStart_toStartOf="@+id/trainIcon"
+        app:layout_constraintBottom_toTopOf="@+id/trainIconDetail"
+        app:layout_constraintEnd_toEndOf="@+id/trainIconDetail"
+        app:layout_constraintStart_toStartOf="@+id/trainIconDetail"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

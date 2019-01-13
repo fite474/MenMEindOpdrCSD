@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,19 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.maurice.menmeindopdr.Fragments.MapsFragment;
-import com.example.maurice.menmeindopdr.NSData.TreinRit;
-import com.google.android.gms.maps.CameraUpdateFactory;
+import com.example.maurice.menmeindopdr.NSData.TreinReis;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.sql.Time;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
-import java.util.List;
 
 public class MapsActivity extends AppCompatActivity {
 
@@ -50,7 +42,7 @@ public class MapsActivity extends AppCompatActivity {
 
 
 
-    TreinRit treinRit;
+    TreinReis treinReis;
     LocalTime currentTime;
     LocalTime expectedArivalTime;
     LocalTime xx;
@@ -67,10 +59,23 @@ public class MapsActivity extends AppCompatActivity {
         distance = findViewById(R.id.routeDistance);
         tijdOverInfo = findViewById(R.id.tijdLEftInfoTxt);
         tijdOverValue = findViewById(R.id.tijdOverTxtValue);
-        treinRit = (TreinRit) getIntent().getSerializableExtra("treinRit");
+        treinReis = (TreinReis) getIntent().getSerializableExtra("treinReis");
+        listButton = findViewById(R.id.button);
 
-
-        System.out.println(treinRit.getRitDuur());
+        listButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(
+                        getApplicationContext(),
+                        DetailActivity.class
+                );
+                intent.putExtra("reis", treinReis);
+                startActivity(intent);
+            }
+        });
+        System.out.println(treinReis.getRitDuur());
 
 //        viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
 //        viewModel.setRotationDeviceListener(this);
@@ -146,7 +151,7 @@ public class MapsActivity extends AppCompatActivity {
 //        int timeToGo = currentHour - expectedHour
 
 
-        requiredArivalTime = treinRit.getAankomsttijd();
+        requiredArivalTime = treinReis.getAankomsttijd();
 
         int requiredTime = (requiredArivalTime.getHours() * 60) + requiredArivalTime.getMinutes();
 

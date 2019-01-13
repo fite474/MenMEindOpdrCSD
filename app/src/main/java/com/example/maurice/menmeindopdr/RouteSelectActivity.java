@@ -11,15 +11,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.maurice.menmeindopdr.API.NSAPICallType;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
 import com.example.maurice.menmeindopdr.API.NsListener;
 import com.example.maurice.menmeindopdr.NSData.Station;
-import com.example.maurice.menmeindopdr.NSData.TreinRit;
+import com.example.maurice.menmeindopdr.NSData.TreinReis;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class RouteSelectActivity extends AppCompatActivity implements NsListener {
 
@@ -28,7 +26,7 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
     TextView beginTxtView;
     TextView eindTxtView;
     ArrayAdapter journeyAdapter;
-    ArrayList<TreinRit> journeyArray;
+    ArrayList<TreinReis> journeyArray;
     Button testStationButton;
     NsAPIHandler api;
     Station startingStation;
@@ -53,7 +51,7 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
 
 
         journeyArray = new ArrayList<>();
-        journeyArray = (ArrayList<TreinRit>) getIntent().getSerializableExtra("ritten");
+        journeyArray = (ArrayList<TreinReis>) getIntent().getSerializableExtra("ritten");
         journeyListView = (ListView) findViewById(R.id.journeysListView);
 
         journeyAdapter = new RouteSelectAdapter(
@@ -72,12 +70,12 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
                         MapsActivity.class
                 );
 
-                TreinRit treinRit = journeyArray.get(position);
+                TreinReis treinReis = journeyArray.get(position);
                 intent.putExtra("startingStationLat", startingStation.getLatitude());
                 intent.putExtra("startingStationLong", startingStation.getLongitude());
-                intent.putExtra("treinRit", treinRit);
+                intent.putExtra("treinReis", treinReis);
 
-                //intent.putExtra("treinRit", journeyArray);
+                //intent.putExtra("treinReis", journeyArray);
                // intent.putExtra("treinRitIndex", position);
 
 
@@ -103,7 +101,7 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
     }
 
     @Override
-    public void onJourneysAvailable(ArrayList<TreinRit> ritten)
+    public void onJourneysAvailable(ArrayList<TreinReis> ritten)
     {
         this.journeyArray = ritten;
     }

@@ -13,6 +13,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.maurice.menmeindopdr.NSData.Station;
 import com.example.maurice.menmeindopdr.NSData.StationType;
+import com.example.maurice.menmeindopdr.NSData.TreinReis;
 import com.example.maurice.menmeindopdr.NSData.TreinRit;
 import com.example.maurice.menmeindopdr.NSData.TreinType;
 
@@ -80,7 +81,8 @@ public class NsAPIHandler  implements Serializable
                     try
                     {
                         Log.d("journey-RESPONSE", response.toString());
-                        ArrayList<TreinRit> ritten = new ArrayList<>();
+                        ArrayList<TreinReis> ritten = new ArrayList<>();
+                        ArrayList<TreinRit> allLegs = new ArrayList<>();
                         JSONArray trips = response.getJSONArray("trips");
                         for (int i = 0; i < trips.length(); i++)
                         {
@@ -89,7 +91,6 @@ public class NsAPIHandler  implements Serializable
                             int transfers = jsonRit.getInt("transfers");
                             JSONArray legs = jsonRit.getJSONArray("legs");
                             JSONObject startLeg = legs.getJSONObject(0);
-                            String treintype = startLeg.getJSONObject("product").getString("categoryCode");
                             JSONObject origin = startLeg.getJSONObject("origin");
                             String destination = startLeg.getString("direction");
 
@@ -113,18 +114,62 @@ public class NsAPIHandler  implements Serializable
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd'T'hh:mm:ss");
                             Date vertrekTijd = format.parse(cutDepartTime);
                             Date aankomstTijd = format.parse(cutArrivalTime);
-                            TreinType type;
-                            if (treintype.equals("IC"))
-                            {
-                                type = TreinType.INTERCITY;
-                            }
-                            else
-                            {
-                                type = TreinType.SPRINTER;
-                            }
 
 
-                            TreinRit rit = new TreinRit(duration, transfers, vertrekTijd, aankomstTijd, type, departureTrack, destination);
+
+                            TreinReis rit = new TreinReis(duration, transfers, vertrekTijd, aankomstTijd, departureTrack, destination);
+
+                            for(int y = 0; y < legs.length(); y++)
+                            {
+                                JSONObject leg = legs.getJSONObject(y);
+                                JSONObject legOrigin = leg.getJSONObject("origin");
+                                JSONObject legDestination = leg.getJSONObject("destination");
+
+                                String startStation = legOrigin.getString("name");
+                                String legDepTime = legOrigin.getString("plannedDateTime");
+                                String cutLegDepTime = legDepTime.substring(0, plusIndex - 1);
+                                Date legDeparture = format.parse(cutLegDepTime);
+                                String legDepTrack = legOrigin.getString("plannedTrack");
+
+                                String endStation = legDestination.getString("name");
+                                String legArrTime = legDestination.getString("plannedDateTime");
+                                String cutlegArrTime = legArrTime.substring(0, plusIndex - 1);
+                                Date legArrival = format.parse(cutlegArrTime);
+                                String legArrTrack = legDestination.getString("plannedTrack");
+
+                                String treintype = leg.getJSONObject("product").getString("categoryCode");
+
+                                String crowdness = leg.getString("crowdForecast");
+                                int totalMinutes = (((legArrival.getHours()*60)+legArrival.getMinutes()) - ((legDeparture.getHours()*60)+legDeparture.getMinutes()));
+                                int rideHours = totalMinutes / 60;
+                                int rideMinutes = totalMinutes % 60;
+                                String rideDuration = "";
+                                if(rideMinutes < 10)
+                                {
+                                    rideDuration = rideHours + ":0"+ rideMinutes;
+                                }
+                                else
+                                {
+                                    rideDuration = rideHours + ":" + rideMinutes;
+                                }
+                                TreinType type;
+                                if (treintype.equals("IC"))
+                                {
+                                    type = TreinType.INTERCITY;
+                                }
+                                else if(treintype.equals("SPR"))
+                                {
+                                    type = TreinType.SPRINTER;
+                                }
+                                else
+                                {
+                                    type = TreinType.INTERCITY_DIRECT;
+                                }
+                                allLegs.add(new TreinRit(type, crowdness, startStation, endStation, legDeparture, legArrival, legDepTrack, legArrTrack, rideDuration));
+
+                            }
+                                rit.setLegs(allLegs);
+
                             ritten.add(rit);
                         }
 

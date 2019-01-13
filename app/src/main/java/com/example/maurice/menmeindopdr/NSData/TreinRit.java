@@ -4,60 +4,90 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TreinRit implements Serializable
-{
-    private int ritDuur;
-    private int aantalOverstappen;
-    private Date vertrektijd;
-    private Date aankomsttijd;
-    private TreinType treinType;
-    private String vertrekSpoor;
-    private String firstDestination; //TODO: later arrayList van destinations, maakt het makkelijker, voor nu eentje
+{                                   // leg/
+    private String startStation;    //---> origin/"name"
+    private String endStation;      //---> destination/"name"
+    private Date departureTime;     //---> origin/"plannedDateTime"
+    private Date arrivalTime;       //---> destination/"plannedDateTime"
+    private String departureTrack;  //---> origin/"plannedTrack"
+    private String arrivalTrack;    //---> destination/"plannedTrack"
+    private String ritDuration;     //---> zelf uitrekenen
+    private String crowdness;       //--->"crowdForecast"
+    private TreinType type;
 
-
-    public TreinRit(int ritDuur, int aantalOverstappen, Date vertrektijd, Date aankomsttijd, TreinType eersteTrein, String vertrekSpoor, String firstDestination)
+    public TreinRit(TreinType type, String crowdness, String startStation, String endStation, Date departureTime, Date arrivalTime, String departureTrack, String arrivalTrack, String ritDuration)
     {
-        this.ritDuur = ritDuur;
-        this.aantalOverstappen = aantalOverstappen;
-        this.vertrektijd = vertrektijd;
-        this.aankomsttijd = aankomsttijd;
-        treinType = eersteTrein;
-        this.vertrekSpoor = vertrekSpoor;
-        this.firstDestination = firstDestination;
-
+        this.type = type;
+        this.startStation = startStation;
+        this.endStation = endStation;
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+        this.departureTrack = departureTrack;
+        this.arrivalTrack = arrivalTrack;
+        this.ritDuration = ritDuration;
+        this.crowdness = crowdness;
     }
 
-    public String getFirstDestination()
+    public String getStartStation()
     {
-        return firstDestination;
+        return startStation;
     }
 
-    public int getRitDuur()
+    public String getEndStation()
     {
-        return ritDuur;
+        return endStation;
     }
 
-    public int getAantalOverstappen()
+    public Date getDepartureTime()
     {
-        return aantalOverstappen;
+        return departureTime;
     }
 
-    public Date getVertrektijd()
+    public Date getArrivalTime()
     {
-        return vertrektijd;
+        return arrivalTime;
     }
 
-    public Date getAankomsttijd()
+    public String getDepartureTrack()
     {
-        return aankomsttijd;
+        return departureTrack;
     }
 
-    public TreinType getTreinType()
+    public String getArrivalTrack()
     {
-        return treinType;
+        return arrivalTrack;
     }
 
-    public String getVertrekSpoor()
+    public String getRitDuration()
     {
-        return vertrekSpoor;
+        return ritDuration;
+    }
+
+    public String getCrowdness()
+    {
+        return crowdness;
+    }
+
+    public TreinType getType()
+    {
+        return type;
+    }
+
+    public int getDepHours()
+    {
+        return this.departureTime.getHours();
+    }
+    public int getDepMinutes()
+    {
+        return this.departureTime.getMinutes();
+    }
+
+    public int getArrHours()
+    {
+        return this.arrivalTime.getHours();
+    }
+    public int getArrMinutes()
+    {
+        return this. arrivalTime.getMinutes();
     }
 }

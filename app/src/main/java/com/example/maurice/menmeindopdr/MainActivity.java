@@ -20,7 +20,7 @@ import com.example.maurice.menmeindopdr.API.NSAPICallType;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
 import com.example.maurice.menmeindopdr.API.NsListener;
 import com.example.maurice.menmeindopdr.NSData.Station;
-import com.example.maurice.menmeindopdr.NSData.TreinRit;
+import com.example.maurice.menmeindopdr.NSData.TreinReis;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements NsListener
     ArrayList<Station> stations;
     TextView foundStation;
     ImageView backgr;
-    ArrayList<TreinRit> ritten;
+    ArrayList<TreinReis> ritten;
     ArrayAdapter<String> adapter;
     ArrayList<String> foundStations;
     ArrayList<Station> foundStationList = new ArrayList<>();
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements NsListener
     }
 
     @Override
-    public void onJourneysAvailable(ArrayList<TreinRit> ritten)
+    public void onJourneysAvailable(ArrayList<TreinReis> ritten)
     {
         this.ritten = ritten;
         foundStations.clear();
