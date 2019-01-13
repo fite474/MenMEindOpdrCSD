@@ -33,6 +33,7 @@ public class MapsActivity extends AppCompatActivity {
     TextView distance;
     TextView tijdOverInfo;
     TextView tijdOverValue;
+    Button listButton;
 
 
 
@@ -119,8 +120,8 @@ public class MapsActivity extends AppCompatActivity {
 
     public void setDetailText(int totalMeters, int durationTime)
     {
-        distance.setText("distance to go: " + totalMeters + "meters");
-        duration.setText("time to station: " + durationTime + "seconds");
+        distance.setText(getString(R.string.afstandInfo) + totalMeters + "meters");
+        duration.setText(getString(R.string.tijdTotInfo) + durationTime + "seconds");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             timeLeftForRoute(durationTime);
         }
@@ -134,7 +135,7 @@ public class MapsActivity extends AppCompatActivity {
         currentTime = LocalTime.now();
 
         int currentUsersTime = (currentTime.getHour() * 60) + currentTime.getMinute();
-        requiredArivalTime = treinRit.getVertrektijd();
+        requiredArivalTime = treinReis.getVertrektijd();
         int requiredTime = (requiredArivalTime.getHours() * 60) + requiredArivalTime.getMinutes();
         int timeNeeded = (requiredTime - currentUsersTime) * 60;
         int red = Color.parseColor("#FF0000");
@@ -160,12 +161,12 @@ public class MapsActivity extends AppCompatActivity {
     {
 
         AlertDialog.Builder builder1 = new AlertDialog.Builder(MapsActivity.this);
-        builder1.setMessage("het lijkt erop dat je de trein niet haalt \n" +
-                "wilt u een nieuwe reis kiezen?");
+        builder1.setMessage(getString(R.string.teLaatBericht) +
+                getString(R.string.teLaatBerichtTwee));
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "Yes",
+                getString(R.string.jaKnop),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -174,7 +175,7 @@ public class MapsActivity extends AppCompatActivity {
                 });
 
         builder1.setNegativeButton(
-                "No",
+                getString(R.string.neeKnop),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();

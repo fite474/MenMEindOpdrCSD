@@ -17,6 +17,8 @@ public class DetailActivity extends AppCompatActivity
 {
     private TextView vanStationTV;
     private TextView naarStationTV;
+    private TextView vanTV;
+    private TextView naarTV;
     private TextView uitlegTV;
     private ListView legListView;
     private ImageView trainIconView;
@@ -33,10 +35,14 @@ public class DetailActivity extends AppCompatActivity
         setContentView(R.layout.activity_detail);
         reis = (TreinReis) getIntent().getSerializableExtra("reis");
         vanStationTV = findViewById(R.id.fromStationTV);
+        vanStationTV.setText(reis.getLegs().get(reis.getLegs().size() - 1).getStartStation());
         naarStationTV = findViewById(R.id.toStationTV);
+        naarStationTV.setText(reis.getLegs().get(reis.getLegs().size() - 1).getEndStation());
         uitlegTV = findViewById(R.id.uitlegTV);
         legListView = findViewById(R.id.travelListView);
         trainIconView = findViewById(R.id.detailTrainIcon);
+
+
 
         legs = new ArrayList<>();
         legs = reis.getLegs();

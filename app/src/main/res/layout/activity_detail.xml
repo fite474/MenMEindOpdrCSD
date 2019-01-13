@@ -130,6 +130,7 @@
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="16sp"
         android:textStyle="bold|italic"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

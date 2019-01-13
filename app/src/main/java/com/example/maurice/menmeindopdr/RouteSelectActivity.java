@@ -44,8 +44,8 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
         LatLng testStation = new LatLng(51.563983, 5.079380);
         beginTxtView = findViewById(R.id.beginStationTxt);
         eindTxtView = findViewById(R.id.eindStationTxt);
-        beginTxtView.setText("van:  "+startingStation.getName());
-        eindTxtView.setText("naar: "+destinationStation.getName());
+        beginTxtView.setText(getString(R.string.vanInfo)+startingStation.getName());
+        eindTxtView.setText(getString(R.string.naarInfo)+destinationStation.getName());
 
         //TODO ending station vergegelijken en routes zoeken voor de listview
 
