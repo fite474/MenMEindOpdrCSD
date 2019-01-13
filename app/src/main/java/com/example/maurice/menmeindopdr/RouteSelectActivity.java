@@ -75,6 +75,10 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
                 TreinRit treinRit = journeyArray.get(position);
                 intent.putExtra("startingStationLat", startingStation.getLatitude());
                 intent.putExtra("startingStationLong", startingStation.getLongitude());
+                intent.putExtra("treinRit", treinRit);
+
+                //intent.putExtra("treinRit", journeyArray);
+               // intent.putExtra("treinRitIndex", position);
 
 
                 startActivity(intent);

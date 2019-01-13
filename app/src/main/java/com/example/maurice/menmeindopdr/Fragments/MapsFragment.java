@@ -22,6 +22,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.maurice.menmeindopdr.DrawingRoute.GetDetailsFromPath;
+import com.example.maurice.menmeindopdr.NSData.TreinRit;
 import com.google.android.gms.location.LocationServices;
 import com.example.maurice.menmeindopdr.App;
 import com.example.maurice.menmeindopdr.DrawingRoute.GetPathFromLocation;
@@ -81,6 +82,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     GetPathFromLocation getPathFromLocation;
     //Station startStation;
     LatLng startingStation;
+    TreinRit chosenTreinRit;
 
     int totalMeters = -1;
     int durationTime = -1;
