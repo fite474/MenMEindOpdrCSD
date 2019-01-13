@@ -7,4 +7,5 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="title_activity_starting">StartingActivity</string>
+    <string name="google_maps_key">AIzaSyBVk7nQvI9otpHGsGr6vLBb_4y8MYrNc5Q</string>
 </resources>

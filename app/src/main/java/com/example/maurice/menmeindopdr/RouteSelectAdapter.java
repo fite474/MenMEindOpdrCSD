@@ -1,6 +1,7 @@
 package com.example.maurice.menmeindopdr;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
     TextView departureTime;
     TextView arrivalTime;
     TextView journeyDuration;
+    TextView destination;
 
     public RouteSelectAdapter(Context context, ArrayList<TreinRit> items) {
         super( context, 0, items);
@@ -40,14 +42,17 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
         // View aanmaken of herbruiken
         if( convertView == null ) {
             convertView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.listview_item_pickroute,
+                    R.layout.listview_item_pickjourney,
                     parent,
                     false
             );
         }
         if(treinRit!= null)
         {
-            trainImage = convertView.findViewById(R.id.trainIconImageView);
+            destination = convertView.findViewById(R.id.destinationTV);
+            destination.setText(treinRit.getFirstDestination());
+
+            trainImage = convertView.findViewById(R.id.trainIcon);
             if (treinRit.getTreinType() == TreinType.INTERCITY)
             {
                 trainImage.setImageResource(R.drawable.trainicon_ic);
@@ -57,27 +62,29 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinRit> {
                 trainImage.setImageResource(R.drawable.trainicon_spr);
             }
 
-            trackImage = convertView.findViewById(R.id.trackImageView);
+            trackImage = convertView.findViewById(R.id.trackIcon);
             trackImage.setImageResource(R.drawable.track);
 
-            transferImage = convertView.findViewById(R.id.transferImageView);
+            transferImage = convertView.findViewById(R.id.transferIcon);
             transferImage.setImageResource(R.drawable.transfer);
 
-            departureTrack = convertView.findViewById(R.id.departureTrackTextView);
+            departureTrack = convertView.findViewById(R.id.trackText);
             departureTrack.setText(treinRit.getVertrekSpoor());
 
-            transfers = convertView.findViewById(R.id.transferTextView);
+            transfers = convertView.findViewById(R.id.transferText);
             transfers.setText(String.valueOf(treinRit.getAantalOverstappen()));
 
-            departureTime = convertView.findViewById(R.id.depTimeTV);
+            departureTime = convertView.findViewById(R.id.depTimeTextView);
             String departuretime = "";
             if(treinRit.getVertrektijd().getMinutes() < 10)
             {
                 departuretime = ""+ treinRit.getVertrektijd().getHours() + ":0" + treinRit.getVertrektijd().getMinutes();
+                Log.d("VERTREKTIJDTAGGGG", String.valueOf(treinRit.getVertrektijd().getHours()));
             }
             else
             {
                 departuretime = ""+ treinRit.getVertrektijd().getHours() + ":"+ treinRit.getVertrektijd().getMinutes();
+                Log.d("VERTREKTIJDTAGGGG", String.valueOf(treinRit.getVertrektijd().getHours()));
             }
             departureTime.setText(departuretime);
 

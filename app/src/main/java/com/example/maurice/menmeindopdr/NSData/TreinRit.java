@@ -11,8 +11,10 @@ public class TreinRit implements Serializable
     private Date aankomsttijd;
     private TreinType treinType;
     private String vertrekSpoor;
+    private String firstDestination; //TODO: later arrayList van destinations, maakt het makkelijker, voor nu eentje
 
-    public TreinRit(int ritDuur, int aantalOverstappen, Date vertrektijd, Date aankomsttijd, TreinType eersteTrein, String vertrekSpoor)
+
+    public TreinRit(int ritDuur, int aantalOverstappen, Date vertrektijd, Date aankomsttijd, TreinType eersteTrein, String vertrekSpoor, String firstDestination)
     {
         this.ritDuur = ritDuur;
         this.aantalOverstappen = aantalOverstappen;
@@ -20,7 +22,13 @@ public class TreinRit implements Serializable
         this.aankomsttijd = aankomsttijd;
         treinType = eersteTrein;
         this.vertrekSpoor = vertrekSpoor;
+        this.firstDestination = firstDestination;
 
+    }
+
+    public String getFirstDestination()
+    {
+        return firstDestination;
     }
 
     public int getRitDuur()

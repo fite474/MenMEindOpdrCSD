@@ -91,6 +91,7 @@ public class NsAPIHandler  implements Serializable
                             JSONObject startLeg = legs.getJSONObject(0);
                             String treintype = startLeg.getJSONObject("product").getString("categoryCode");
                             JSONObject origin = startLeg.getJSONObject("origin");
+                            String destination = startLeg.getString("direction");
 
                             String departureTrack = origin.getString("plannedTrack");
                             String departureTime = origin.getString("plannedDateTime");
@@ -123,7 +124,7 @@ public class NsAPIHandler  implements Serializable
                             }
 
 
-                            TreinRit rit = new TreinRit(duration, transfers, vertrekTijd, aankomstTijd, type, departureTrack);
+                            TreinRit rit = new TreinRit(duration, transfers, vertrekTijd, aankomstTijd, type, departureTrack, destination);
                             ritten.add(rit);
                         }
 

@@ -117,7 +117,7 @@ public class StartingActivity extends AppCompatActivity implements NsListener
                                 Log.d(TAG, "onComplete: ");
                                 currentLocation = (Location) task.getResult();
                                 api.HandleAPICall(NSAPICallType.FIND_STATIONS,  null, null);
-                                //moveCamera(new LatLng(searchedStation.getLatitude(), searchedStation.getLongitude()), DEFAULT_ZOOM);
+                                //moveCamera(new LatLng(foundStationListView.getLatitude(), foundStationListView.getLongitude()), DEFAULT_ZOOM);
                             }
                             catch(Exception e){
 //                                AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getContext());

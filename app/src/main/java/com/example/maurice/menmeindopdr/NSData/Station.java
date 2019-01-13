@@ -27,7 +27,11 @@ public class Station implements Serializable
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
+    public Station()
+    {
+        this.code = "TB";
+        this.naam = "Tilburg";
+    }
     public String getCode()
     {
         return code;
@@ -96,5 +100,15 @@ public class Station implements Serializable
     public void setLongitude(double longitude)
     {
         this.longitude = longitude;
+    }
+
+    public boolean equals(Station anotherOne)
+    {
+        boolean same = true;
+        if(!this.naam.equals(anotherOne.getName()) && !this.code.equals(anotherOne.getCode()))
+        {
+            same = false;
+        }
+        return same;
     }
 }

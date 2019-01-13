@@ -218,6 +218,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         } catch (IllegalArgumentException ex) {
             Log.e(TAG, "gps provider does not exist " + ex.getMessage());
         }
+
     }
 
 
@@ -455,11 +456,14 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     @Override
     public void onLocationChanged(Location location) {
-        addPolyLine(new PolylineOptions()
-                .add(new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
-                        new LatLng(location.getLatitude(), location.getLongitude()))
-                .width(5)
-                .color(Color.RED));
+        if(previousLocation != null)
+        {
+            addPolyLine(new PolylineOptions()
+                    .add(new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude()),
+                            new LatLng(location.getLatitude(), location.getLongitude()))
+                    .width(5)
+                    .color(Color.RED));
+        }
         previousLocation = location;
 
 

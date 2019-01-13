@@ -5,9 +5,14 @@ import android.location.Location;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
@@ -24,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements NsListener
 {
     NsAPIHandler api;
     Button zoekStationButton;
-    TextView searchedStation;
+    ListView foundStationListView;
     LatLng currentDeviceLocation;
     EditText gezochtStation;
     Station closestStation;
@@ -34,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements NsListener
     TextView foundStation;
     ImageView backgr;
     ArrayList<TreinRit> ritten;
+    ArrayAdapter<String> adapter;
+    ArrayList<String> foundStations;
+    ArrayList<Station> foundStationList = new ArrayList<>();
+    String stationToEnd;
 
     private static int TIME_OUT = 2420;
 
@@ -47,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements NsListener
                 getIntent().getDoubleExtra("currentLocationLong", 1.0));
         closestStation = (Station) getIntent().getSerializableExtra("closestStation");
         zoekStationButton = findViewById(R.id.zoekStationButton);
-        searchedStation = findViewById(R.id.foundStationTV);
+        foundStationListView = findViewById(R.id.foundStationsListView);
         foundStation = findViewById(R.id.closestStationTextview);
         foundStation.setText(closestStation.getName());
         backgr = findViewById(R.id.foundImageView);
@@ -55,67 +64,136 @@ public class MainActivity extends AppCompatActivity implements NsListener
         gezochtStation = findViewById(R.id.searchStation);
 
 
-
+        foundStations = new ArrayList<>();
 
         this.stations = new ArrayList<>();
         api.HandleAPICall(NSAPICallType.FIND_STATIONS, null, null);
         this.ritten = new ArrayList<>();
-
-
+        adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.listview_item_pick_station, R.id.stationNameTV, foundStations);
+        adapter.setNotifyOnChange(true);
+        foundStationListView.setAdapter(adapter);
 
         zoekStationButton.setOnClickListener(v -> {
 //            final String startingStation = closestStation.getName().toLowerCase();
             if(gezochtStation.getText().length() >=1)
             {
-                String stationToEnd = String.valueOf(gezochtStation.getText()).toLowerCase();
+                stationToEnd = String.valueOf(gezochtStation.getText()).toLowerCase();
                 boolean validStation = false;
-                boolean doneSearching = false;
-                int i = 0;
-                while(!validStation && !doneSearching)
+                adapter.clear();
+                foundStations.clear();
+                for (int i = 0; i < stations.size(); i++)
                 {
                     Station currStation = stations.get(i);
                     if (currStation.getName().toLowerCase().contains(stationToEnd))
                     {
                         validStation = true;
-                        destinationStation = currStation;
+                        foundStationList.add(currStation);
+                        foundStations.add(currStation.getName());
                     }
 
-                    if (i == stations.size() - 1)
-                    {
-                        doneSearching = true;
-                    }
-                    else
-                    {
-                        i++;
-                    }
                 }
                 if(validStation)
                 {
-                    searchedStation.setText(buildText());
-                    api.HandleAPICall(NSAPICallType.FROM_TO_REQUEST, closestStation.getCode(), destinationStation.getCode());
+                    //Nothing, this happens below
                 }
                 else
                 {
-                    searchedStation.setText("Station niet gevonden");
-                    gezochtStation.setText("");
+                   foundStations.add("Geen overeenkomstige stations.");
+
                 }
             }
             else
             {
-                searchedStation.setText("Voer eerst een station in");
+                foundStations.add("Voer eerst een station in");
+//                adapter.addAll(foundStations);
             }
-
+            gezochtStation.setText("");
         });
 
-    }
+        foundStationListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+            {
+                Log.i("STATION-TAG", String.valueOf(position));
+                Intent intent = new Intent(
+                        getApplicationContext(),
+                        RouteSelectActivity.class
+                );
 
-    private String buildText()
-    {
-        return "Ritten worden gezocht van station "+
-                closestStation.getName() +
-                " naar station " +
-                destinationStation.getName() +
-                ".\nEven geduld aub...";
+                String stationName = foundStations.get(position);
+                if(checkValidStationName(stationName))
+                {
+                    searchForStation(stationName);
+
+                }
+                else
+                {
+
+                }
+
+            }
+
+            private boolean checkValidStationName(String stationName)
+            {
+                boolean valid = true;
+                if(stationName.equals("Geen overeenkomstige stations."))
+                {
+                    valid = false;
+                }
+                else if(stationName.equals("Voer eerst een station in"))
+                {
+                    valid = false;
+                }
+                else if (stationName.equals("Ritten worden gezocht!"))
+                {
+                    valid = false;
+                }
+                else if(stationName.equals("Ritten gevonden!"))
+                {
+                    valid = false;
+                }
+                else if(stationName.equals("Geen reizen gevonden."))
+                {
+                    valid = false;
+                }
+                return valid;
+            }
+
+            private void searchForStation(String name)
+            {
+                int i = 0;
+                boolean found = false;
+                while(!found && i < stations.size())
+                {
+                    Station currStation = stations.get(i);
+                    if(currStation.getName().equals(name))
+                    {
+                        destinationStation = currStation;
+                        found = true;
+                    }
+                    i++;
+                }
+                api.HandleAPICall(NSAPICallType.FROM_TO_REQUEST, closestStation.getCode(), destinationStation.getCode());
+                adapter.clear();
+                foundStations.clear();
+                foundStations.add("Ritten worden gezocht!");
+
+            }
+
+            private void refillList()
+            {
+                foundStations.clear();
+                for(int i = 0; i < foundStationList.size(); i++)
+                {
+                    foundStations.add(foundStationList.get(i).getName());
+                }
+                adapter.clear();
+//                adapter.addAll(foundStations);
+
+            }
+        });
+
     }
 
     @Override
@@ -141,7 +219,10 @@ public class MainActivity extends AppCompatActivity implements NsListener
     public void onJourneysAvailable(ArrayList<TreinRit> ritten)
     {
         this.ritten = ritten;
-        searchedStation.setText("Ritten gevonden!");
+        foundStations.clear();
+        adapter.clear();
+        foundStations.add("Ritten gevonden!");
+//        adapter.addAll(foundStations);
         new Handler().postDelayed(new Runnable()
         {
             @Override
@@ -164,7 +245,11 @@ public class MainActivity extends AppCompatActivity implements NsListener
     @Override
     public void noJourneyAvailable()
     {
-        searchedStation.setText("nope....................");
+        foundStations.clear();
+        adapter.clear();
+        foundStations.add("Geen reizen gevonden.");
+//        adapter.addAll(foundStations);
+
     }
 
 
