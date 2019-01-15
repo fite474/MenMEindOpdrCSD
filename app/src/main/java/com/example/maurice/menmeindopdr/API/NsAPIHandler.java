@@ -87,6 +87,7 @@ public class NsAPIHandler  implements Serializable
                         JSONArray trips = response.getJSONArray("trips");
                         for (int i = 0; i < trips.length(); i++)
                         {
+
                             JSONObject jsonRit = trips.getJSONObject(i);
                             int duration = jsonRit.getInt("plannedDurationInMinutes");
                             int transfers = jsonRit.getInt("transfers");
@@ -102,7 +103,7 @@ public class NsAPIHandler  implements Serializable
                             int rideDepartureHour = Integer.valueOf(rideDepHourString);
                             int rideDepartureMin = Integer.valueOf(rideDepMinString);
                             TimeStamp rideDeparture = new TimeStamp(rideDepartureHour, rideDepartureMin);
-                            String firstTrain = origin.getJSONObject("product").getString("categoryCode");
+                            String firstTrain = startLeg.getJSONObject("product").getString("categoryCode");
                             TreinType type;
                             if (firstTrain.equals("IC"))
                             {
