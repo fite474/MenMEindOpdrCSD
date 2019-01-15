@@ -95,8 +95,14 @@ public class NsAPIHandler  implements Serializable
                             JSONObject origin = startLeg.getJSONObject("origin");
                             String destination = startLeg.getString("direction");
                             String departureTrack = origin.getString("plannedTrack");
-                            String departureTime = origin.getString("plannedDateTime");
-                            JSONObject endleg;
+                            String rideDepartureTime = origin.getString("plannedDateTime");
+                            String cutRideDepTime = rideDepartureTime.substring(10,16);
+                            String rideDepHourString = cutRideDepTime.substring(1,3);
+                            String rideDepMinString = cutRideDepTime.substring(4,6);
+                            int rideDepartureHour = Integer.valueOf(rideDepHourString);
+                            int rideDepartureMin = Integer.valueOf(rideDepMinString);
+                            TimeStamp rideDeparture = new TimeStamp(rideDepartureHour, rideDepartureMin);
+
 
 
 
@@ -168,8 +174,8 @@ public class NsAPIHandler  implements Serializable
                                 allLegs.add(new TreinRit(legDestStationName, type, crowdness, startStation, endStation, legDeparture, legArrival, legDepTrack, legArrTrack, rideTime.toString()));
 
                             }
-                                TreinReis rit = new TreinReis(depStation, destinationStation, duration, transfers, null, null, departureTrack, destination);
-                                rit.setVertrektijd(allLegs.get(0).getDepartureTime());
+                                TreinReis rit = new TreinReis(depStation, destinationStation, duration, transfers, rideDeparture, null, departureTrack, destination);
+
                                 rit.setAankomsttijd(allLegs.get(allLegs.size()-1).getArrivalTime());
                                 rit.setLegs(allLegs);
 
