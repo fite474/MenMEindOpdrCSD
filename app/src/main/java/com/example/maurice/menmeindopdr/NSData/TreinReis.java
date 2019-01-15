@@ -4,7 +4,6 @@ import com.example.maurice.menmeindopdr.TimeStamp;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class TreinReis implements Serializable
 {
@@ -12,7 +11,7 @@ public class TreinReis implements Serializable
     private int aantalOverstappen;
     private TimeStamp vertrektijd;
     private TimeStamp aankomsttijd;
-    //private TreinType treinType;
+    private TreinType eersteTreinType;
     private String vertrekSpoor;
     private String vertrekStation;
     private String aankomstStation;
@@ -31,7 +30,7 @@ public class TreinReis implements Serializable
         this.aantalOverstappen = aantalOverstappen;
         this.vertrektijd = vertrektijd;
         this.aankomsttijd = aankomsttijd;
-        //treinType = eersteTrein;
+
         this.vertrekSpoor = vertrekSpoor;
         this.firstDestination = firstDestination;
 
@@ -103,7 +102,11 @@ public class TreinReis implements Serializable
         return aankomsttijd;
     }
 
-   // public TreinType getTreinType()    {        return treinType;    }
+    public TreinType getEersteTreinType()    {        return eersteTreinType;    }
+    public void setEersteTreinType(TreinType type)
+    {
+        this.eersteTreinType = type;
+    }
 
     public String getVertrekSpoor()
     {

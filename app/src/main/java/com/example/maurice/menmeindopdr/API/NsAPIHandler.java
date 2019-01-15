@@ -102,8 +102,20 @@ public class NsAPIHandler  implements Serializable
                             int rideDepartureHour = Integer.valueOf(rideDepHourString);
                             int rideDepartureMin = Integer.valueOf(rideDepMinString);
                             TimeStamp rideDeparture = new TimeStamp(rideDepartureHour, rideDepartureMin);
-
-
+                            String firstTrain = origin.getJSONObject("product").getString("categoryCode");
+                            TreinType type;
+                            if (firstTrain.equals("IC"))
+                            {
+                                type = TreinType.INTERCITY;
+                            }
+                            else if(firstTrain.equals("SPR"))
+                            {
+                                type = TreinType.SPRINTER;
+                            }
+                            else
+                            {
+                                type = TreinType.INTERCITY_DIRECT;
+                            }
 
 
                             JSONObject finalRit = trips.getJSONObject(trips.length()-1);
@@ -158,24 +170,24 @@ public class NsAPIHandler  implements Serializable
                                 int totalMinutes = (legArrival.getTotalMinutes() - legDeparture.getTotalMinutes());
                                 TimeStamp rideTime = new TimeStamp(totalMinutes);
 
-                                TreinType type;
+                                TreinType legTrainType;
                                 if (treintype.equals("IC"))
                                 {
-                                    type = TreinType.INTERCITY;
+                                    legTrainType = TreinType.INTERCITY;
                                 }
                                 else if(treintype.equals("SPR"))
                                 {
-                                    type = TreinType.SPRINTER;
+                                    legTrainType = TreinType.SPRINTER;
                                 }
                                 else
                                 {
-                                    type = TreinType.INTERCITY_DIRECT;
+                                    legTrainType = TreinType.INTERCITY_DIRECT;
                                 }
-                                allLegs.add(new TreinRit(legDestStationName, type, crowdness, startStation, endStation, legDeparture, legArrival, legDepTrack, legArrTrack, rideTime.toString()));
+                                allLegs.add(new TreinRit(legDestStationName, legTrainType, crowdness, startStation, endStation, legDeparture, legArrival, legDepTrack, legArrTrack, rideTime.toString()));
 
                             }
                                 TreinReis rit = new TreinReis(depStation, destinationStation, duration, transfers, rideDeparture, null, departureTrack, destination);
-
+                                rit.setEersteTreinType(type);
                                 rit.setAankomsttijd(allLegs.get(allLegs.size()-1).getArrivalTime());
                                 rit.setLegs(allLegs);
 
