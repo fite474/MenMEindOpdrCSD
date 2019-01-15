@@ -19,6 +19,7 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
     ImageView trainIcon;
     ImageView depTrackIcon;
     ImageView arrTrackIcon;
+    ImageView background;
     TextView startStationTV;
     TextView endStationTV;
     TextView startTrackTV;
@@ -56,6 +57,8 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
             crowdTV = convertView.findViewById(R.id.crowdnessTV);
             depTrackIcon = convertView.findViewById(R.id.depTrackIcon);
             arrTrackIcon = convertView.findViewById(R.id.arrTrackIcon);
+            background = convertView.findViewById(R.id.backgroundLegIMV);
+
 
 
             if(rit.getType().equals(TreinType.SPRINTER))

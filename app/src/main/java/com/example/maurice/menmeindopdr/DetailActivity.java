@@ -54,7 +54,7 @@ public class DetailActivity extends AppCompatActivity
         );
         legListView.setAdapter(adapter);
         adapter.setNotifyOnChange(true);
-        adapter.addAll(legs);
+
 
     }
 }
