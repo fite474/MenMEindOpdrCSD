@@ -10,10 +10,15 @@
     <string name="google_maps_key" translatable="false">AIzaSyBVk7nQvI9otpHGsGr6vLBb_4y8MYrNc5Q</string>
     <string name="vanInfo">van:</string>
     <string name="naarInfo">naar:</string>
-    <string name="afstandInfo">afstand te gaan:</string>
+    <string name="afstandInfo">afstand tot station:</string>
     <string name="tijdTotInfo">tijd tot station:</string>
     <string name="jaKnop">ja</string>
     <string name="neeKnop">nee</string>
     <string name="teLaatBericht">het lijkt erop dat je de trein niet haalt</string>
     <string name="teLaatBerichtTwee">wilt u een nieuwe reis kiezen?</string>
+    <string name="geenOvereenkomst">Geen overeenkomstige stations.</string>
+    <string name="voerStationIn">Voer eerst een station in</string>
+    <string name="rittenWordenGezocht">Ritten worden gezocht!</string>
+    <string name="rittenGevonde">Ritten gevonden!</string>
+    <string name="geenRittenGevonde">Geen reizen gevonden.</string>
 </resources>

@@ -3,10 +3,11 @@
     <string name="app_name">Nmata</string>
     <string name="vanInfo">"from: "</string>
     <string name="naarInfo">"to: "</string>
-    <string name="afstandInfo">afstand te gaan:</string>
-    <string name="tijdTotInfo">tijd tot station:</string>
-    <string name="jaKnop">ja</string>
-    <string name="neeKnop">nee</string>
-    <string name="teLaatBericht">het lijkt erop dat je de trein niet haalt</string>
-    <string name="teLaatBerichtTwee">wilt u een nieuwe reis kiezen?</string>
+    <string name="afstandInfo">distance to station:</string>
+    <string name="tijdTotInfo">time to station:</string>
+    <string name="jaKnop">yes</string>
+    <string name="neeKnop">no</string>
+    <string name="teLaatBericht">it looks like you wont make it in time</string>
+    <string name="teLaatBerichtTwee">do you want to select a different journey</string>
+    <string name="geenOvereenkomst">No matching stations.</string>
 </resources>

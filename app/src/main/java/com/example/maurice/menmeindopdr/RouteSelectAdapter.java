@@ -48,7 +48,7 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
         if(treinReis != null)
         {
             destination = convertView.findViewById(R.id.destinationTV);
-            destination.setText(treinReis.getLegs().get(0).getDestination());
+            destination.setText(treinReis.getFirstDestination());
 
             trainImage = convertView.findViewById(R.id.trainIconDetail);
             chooseSetTrainImage(treinReis);

@@ -100,13 +100,13 @@ public class StartingActivity extends AppCompatActivity implements NsListener
                 }
                 else
                 {
-                   foundStations.add("Geen overeenkomstige stations.");
+                   foundStations.add(getString(R.string.geenOvereenkomst));
 
                 }
             }
             else
             {
-                foundStations.add("Voer eerst een station in");
+                foundStations.add(getString(R.string.voerStationIn));
 //                adapter.addAll(foundStations);
             }
             gezochtStation.setText("");
@@ -139,23 +139,23 @@ public class StartingActivity extends AppCompatActivity implements NsListener
             private boolean checkValidStationName(String stationName)
             {
                 boolean valid = true;
-                if(stationName.equals("Geen overeenkomstige stations."))
+                if(stationName.equals(getString(R.string.geenOvereenkomst)))
                 {
                     valid = false;
                 }
-                else if(stationName.equals("Voer eerst een station in"))
+                else if(stationName.equals(getString(R.string.voerStationIn)))
                 {
                     valid = false;
                 }
-                else if (stationName.equals("Ritten worden gezocht!"))
+                else if (stationName.equals(getString(R.string.rittenWordenGezocht)))
                 {
                     valid = false;
                 }
-                else if(stationName.equals("Ritten gevonden!"))
+                else if(stationName.equals(getString(R.string.rittenGevonde)))
                 {
                     valid = false;
                 }
-                else if(stationName.equals("Geen reizen gevonden."))
+                else if(stationName.equals(getString(R.string.geenRittenGevonde)))
                 {
                     valid = false;
                 }
@@ -179,7 +179,7 @@ public class StartingActivity extends AppCompatActivity implements NsListener
                 api.HandleAPICall(NSAPICallType.FROM_TO_REQUEST, closestStation.getCode(), destinationStation.getCode());
                 adapter.clear();
                 foundStations.clear();
-                foundStations.add("Ritten worden gezocht!");
+                foundStations.add(getString(R.string.rittenWordenGezocht));
 
             }
 
@@ -223,7 +223,7 @@ public class StartingActivity extends AppCompatActivity implements NsListener
         this.ritten = ritten;
         foundStations.clear();
         adapter.clear();
-        foundStations.add("Ritten gevonden!");
+        foundStations.add(getString(R.string.rittenGevonde));
 //        adapter.addAll(foundStations);
         new Handler().postDelayed(new Runnable()
         {
@@ -249,7 +249,7 @@ public class StartingActivity extends AppCompatActivity implements NsListener
     {
         foundStations.clear();
         adapter.clear();
-        foundStations.add("Geen reizen gevonden.");
+        foundStations.add(getString(R.string.geenRittenGevonde));
 //        adapter.addAll(foundStations);
 
     }
