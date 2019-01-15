@@ -37,6 +37,8 @@ public class MapsActivity extends AppCompatActivity {
 
 
 
+
+
     TreinReis treinReis;
     LocalTime currentTime;
 
@@ -54,23 +56,23 @@ public class MapsActivity extends AppCompatActivity {
         distance = findViewById(R.id.routeDistance);
         tijdOverInfo = findViewById(R.id.tijdLEftInfoTxt);
         tijdOverValue = findViewById(R.id.tijdOverTxtValue);
-        treinReis = (TreinReis) getIntent().getSerializableExtra("treinReis");
-        listButton = findViewById(R.id.button);
-
-        listButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Intent intent = new Intent(
-                        getApplicationContext(),
-                        DetailActivity.class
-                );
-                intent.putExtra("reis", treinReis);
-                startActivity(intent);
-            }
-        });
-        System.out.println(treinReis.getRitDuur());
+        treinReis = (TreinReis) getIntent().getSerializableExtra("reis");
+//        listButton = findViewById(R.id.button);
+//
+//        listButton.setOnClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View view)
+//            {
+//                Intent intent = new Intent(
+//                        getApplicationContext(),
+//                        DetailActivity.class
+//                );
+//                intent.putExtra("reis", treinReis);
+//                startActivity(intent);
+//            }
+//        });
+//        System.out.println(treinReis.getRitDuur());
 
 //        viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
 //        viewModel.setRotationDeviceListener(this);
@@ -154,7 +156,7 @@ public class MapsActivity extends AppCompatActivity {
 
             showTooLateDialog();
         }
-        tijdOverValue.setText("nog: " + timeNeeded + " seconde");
+        tijdOverValue.setText(getString(R.string.tijdOverNog) + timeNeeded + getString(R.string.secondes));
     }
 
     private void showTooLateDialog()

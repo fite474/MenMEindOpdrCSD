@@ -21,8 +21,20 @@
     <string name="rittenWordenGezocht">Ritten worden gezocht!</string>
     <string name="rittenGevonde">Ritten gevonden!</string>
     <string name="geenRittenGevonde">Geen reizen gevonden.</string>
+    <string name="tijdOverNog">nog:</string>
+    <string name="secondes">secondes</string>
+    <string name="Rustig">Rustig</string>
+    <string name="druk">Druk</string>
+    <string name="zoekHierStation">Zoek hier uw station</string>
+    <string name="gevondenStations">Gevonden stations:</string>
+    <string name="maakUwKeuze">Maak uw keuze</string>
+    <string name="zoekEerstStation">Zoek eerst een station</string>
+    <string name="vertrekTijd">Vertrek tijd:</string>
+    <string name="aankomstTijd">Aankomst Tijd:</string>
+    <string name="ritDuur">Ritduur:</string>
+    <string name="omTijdstip">Om:</string>
+    <string name="gevondeStation">Gevonden station</string>
+    <string name="zoek">Zoeken</string>
+    <string name="gaNaarMapsKnop">Mijn route naar het dichtbijzijnds station</string>
     <string name="detailTransferInfo">Je overstappen deze reis:</string>
-    <string name="drukte_druk">Druk</string>
-    <string name="drukte_rustig">Rustig</string>
-    <string name="om">Om:</string>
 </resources>

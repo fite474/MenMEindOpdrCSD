@@ -10,8 +10,24 @@
     <string name="teLaatBericht">it looks like you wont make it in time</string>
     <string name="teLaatBerichtTwee">do you want to select a different journey</string>
     <string name="geenOvereenkomst">No matching stations.</string>
+    <string name="voerStationIn">Enter a station name first</string>
+    <string name="rittenWordenGezocht">Searching rides!</string>
+    <string name="rittenGevonde">Rides found!</string>
+    <string name="geenRittenGevonde">No rides found!</string>
+    <string name="tijdOverNog">"time left: "</string>
+    <string name="secondes">seconds</string>
+    <string name="Rustig">Not busy</string>
+    <string name="druk">Busy</string>
+    <string name="zoekHierStation">Enter station name</string>
+    <string name="gevondenStations">Found stations:</string>
+    <string name="maakUwKeuze">Make your choice</string>
+    <string name="zoekEerstStation">Search for a station first</string>
+    <string name="vertrekTijd">"Departure time: "</string>
+    <string name="aankomstTijd">"Destination time: "</string>
+    <string name="ritDuur">"Ride time: "</string>
+    <string name="omTijdstip">"At: "</string>
+    <string name="gevondeStation">Found station</string>
+    <string name="zoek">Search</string>
+    <string name="gaNaarMapsKnop">My route to the nearby station</string>
     <string name="detailTransferInfo">Your transfers during this journey:</string>
-    <string name="drukte_druk">Crowded</string>
-    <string name="drukte_rustig">Uncrowded</string>
-    <string name="om">At:</string>
 </resources>

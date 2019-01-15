@@ -72,6 +72,12 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
                         DetailActivity.class
                 );
 
+                double startingStationLat = startingStation.getLatitude();
+                double startingStationLong = startingStation.getLongitude();
+
+                intent.putExtra("startingStationLat", startingStationLat);
+                intent.putExtra("startingStationLong", startingStationLong);
+
                 TreinReis treinReis = journeyArray.get(position);
                 //intent.putExtra("startingStationLat", startingStation.getLatitude());
                 //intent.putExtra("startingStationLong", startingStation.getLongitude());

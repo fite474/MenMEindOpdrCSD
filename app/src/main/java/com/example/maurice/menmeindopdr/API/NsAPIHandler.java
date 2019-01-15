@@ -83,11 +83,12 @@ public class NsAPIHandler  implements Serializable
                     {
                         Log.d("journey-RESPONSE", response.toString());
                         ArrayList<TreinReis> ritten = new ArrayList<>();
-                        ArrayList<TreinRit> allLegs = new ArrayList<>();
+//                        ArrayList<TreinRit> allLegs = new ArrayList<>();
                         JSONArray trips = response.getJSONArray("trips");
                         for (int i = 0; i < trips.length(); i++)
                         {
-                            allLegs.clear();
+                            ArrayList<TreinRit> allLegs = new ArrayList<>();
+                            //allLegs.clear();
                             JSONObject jsonRit = trips.getJSONObject(i);
 
                             int duration = jsonRit.getInt("plannedDurationInMinutes");
@@ -132,6 +133,7 @@ public class NsAPIHandler  implements Serializable
 
                             for(int y = 0; y < legs.length(); y++)
                             {
+                                //allLegs.clear();
                                 JSONObject leg = legs.getJSONObject(y);
                                 boolean cancelled = leg.getBoolean("cancelled");
                                 String legDestStationName = leg.getString("direction");
@@ -201,10 +203,11 @@ public class NsAPIHandler  implements Serializable
                             }
                             TreinReis rit = new TreinReis(depStation, destinationStation, duration, transfers, rideDeparture, null, departureTrack, destination);
                             rit.setEersteTreinType(type);
-                            rit.setAankomsttijd(allLegs.get(allLegs.size()-1).getArrivalTime());
+                            rit.setAankomsttijd(allLegs.get(allLegs.size() - 1).getArrivalTime());
                             rit.setLegs(allLegs);
 
                             ritten.add(rit);
+                            //allLegs.clear();
                         }
 
                         listener.onJourneysAvailable(ritten);
