@@ -63,8 +63,8 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
 
             arrAtTV = convertView.findViewById(R.id.arrAtTV);
             depAtTV = convertView.findViewById(R.id.omtv1);
-            arrAtTV.setText(R.string.om);
-            depAtTV.setText(R.string.om);
+            arrAtTV.setText(R.string.omTijdstip);
+            depAtTV.setText(R.string.omTijdstip);
 
             if(rit.isCancelled())
             {

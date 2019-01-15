@@ -30,4 +30,5 @@
     <string name="zoek">Search</string>
     <string name="gaNaarMapsKnop">My route to the nearby station</string>
     <string name="detailTransferInfo">Your transfers during this journey:</string>
+    <string name="uur">" hours"</string>
 </resources>

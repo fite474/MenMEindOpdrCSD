@@ -1,11 +1,16 @@
 package com.example.maurice.menmeindopdr;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class TimeStamp implements Serializable
 {
     public int hours;
     public int minutes;
+
+
+
 
 
     public TimeStamp(int hours, int minutes)

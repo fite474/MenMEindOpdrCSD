@@ -37,4 +37,5 @@
     <string name="zoek">Zoeken</string>
     <string name="gaNaarMapsKnop">Mijn route naar het dichtbijzijnds station</string>
     <string name="detailTransferInfo">Je overstappen deze reis:</string>
+    <string name="uur">uur</string>
 </resources>

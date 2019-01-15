@@ -122,8 +122,13 @@ public class MapsActivity extends AppCompatActivity {
 
     public void setDetailText(int totalMeters, int durationTime)
     {
+        int seconds = durationTime % 60;
+        int minutes = durationTime / 60;
+        int hours = 0;//durationTime / 3600;
+
+        TimeStamp time = new TimeStamp(minutes);
         distance.setText(getString(R.string.afstandInfo) + totalMeters + "meters");
-        duration.setText(getString(R.string.tijdTotInfo) + durationTime + "seconds");
+        duration.setText(getString(R.string.tijdTotInfo) + time.toString() + getString(R.string.uur));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             timeLeftForRoute(durationTime);
         }
@@ -156,7 +161,14 @@ public class MapsActivity extends AppCompatActivity {
 
             showTooLateDialog();
         }
-        tijdOverValue.setText(getString(R.string.tijdOverNog) + timeNeeded + getString(R.string.secondes));
+
+        int secondsforstring = seconds % 60;
+        int minutes = timeNeeded / 60;
+        int hours = 0;//durationTime / 3600;
+
+        TimeStamp time = new TimeStamp(minutes);
+
+        tijdOverValue.setText(getString(R.string.tijdOverNog) + time + getString(R.string.uur));
     }
 
     private void showTooLateDialog()
