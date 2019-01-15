@@ -37,6 +37,8 @@ public class MapsActivity extends AppCompatActivity {
 
 
 
+
+
     TreinReis treinReis;
     LocalTime currentTime;
 
@@ -154,7 +156,7 @@ public class MapsActivity extends AppCompatActivity {
 
             showTooLateDialog();
         }
-        tijdOverValue.setText("nog: " + timeNeeded + " seconde");
+        tijdOverValue.setText(getString(R.string.tijdOverNog) + timeNeeded + getString(R.string.secondes));
     }
 
     private void showTooLateDialog()

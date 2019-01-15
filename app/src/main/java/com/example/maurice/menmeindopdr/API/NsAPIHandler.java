@@ -131,6 +131,7 @@ public class NsAPIHandler  implements Serializable
 
                             for(int y = 0; y < legs.length(); y++)
                             {
+                                allLegs.clear();
                                 JSONObject leg = legs.getJSONObject(y);
                                 String legDestStationName = leg.getString("direction");
                                 JSONObject legOrigin = leg.getJSONObject("origin");

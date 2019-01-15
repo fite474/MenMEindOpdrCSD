@@ -71,11 +71,11 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
 
             if(rit.getCrowdness().equals("LOW"))
             {
-                crowdTV.setText("Rustig");
+                crowdTV.setText(R.string.Rustig);
             }
             else
             {
-                crowdTV.setText("Druk");
+                crowdTV.setText(R.string.druk);
             }
 
 
