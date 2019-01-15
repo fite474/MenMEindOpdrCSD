@@ -51,7 +51,6 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
 
 
         journeyArray = new ArrayList<>();
-        journeyArray = (ArrayList<TreinReis>) getIntent().getSerializableExtra("ritten");
         journeyListView = (ListView) findViewById(R.id.journeysListView);
 
         journeyAdapter = new RouteSelectAdapter(
@@ -59,6 +58,9 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
                 journeyArray
         );
         journeyListView.setAdapter(journeyAdapter);
+        journeyAdapter.setNotifyOnChange(true);
+        journeyArray = (ArrayList<TreinReis>) getIntent().getSerializableExtra("ritten");
+        journeyAdapter.addAll(journeyArray);
 
         journeyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -67,13 +69,13 @@ public class RouteSelectActivity extends AppCompatActivity implements NsListener
 
                 Intent intent = new Intent(
                         getApplicationContext(),
-                        MapsActivity.class
+                        DetailActivity.class
                 );
 
                 TreinReis treinReis = journeyArray.get(position);
-                intent.putExtra("startingStationLat", startingStation.getLatitude());
-                intent.putExtra("startingStationLong", startingStation.getLongitude());
-                intent.putExtra("treinReis", treinReis);
+                //intent.putExtra("startingStationLat", startingStation.getLatitude());
+                //intent.putExtra("startingStationLong", startingStation.getLongitude());
+                intent.putExtra("reis", treinReis);
 
                 //intent.putExtra("treinReis", journeyArray);
                // intent.putExtra("treinRitIndex", position);

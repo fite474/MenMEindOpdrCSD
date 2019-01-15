@@ -66,24 +66,10 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
             endStationTV.setText(rit.getEndStation());
             startTrackTV.setText(rit.getDepartureTrack());
             endTrackTV.setText(rit.getArrivalTrack());
-            if(rit.getDepMinutes() < 10)
-            {
-                startTimeTV.setText(rit.getDepHours() + ":0"+ rit.getDepMinutes());
-            }
-            else
-            {
-                startTimeTV.setText(rit.getDepHours() + ":"+ rit.getDepMinutes());
-            }
-            if(rit.getArrMinutes() < 10)
-            {
-                endTimeTV.setText(rit.getArrHours() + ":0"+ rit.getArrMinutes());
-            }
-            else
-            {
-                endTimeTV.setText(rit.getArrHours() + ":"+ rit.getArrMinutes());
-            }
+            startTimeTV.setText(rit.getDepartureTime().toString());
+            endTimeTV.setText(rit.getArrivalTime().toString());
 
-            if(rit.getCrowdness() == "LOW")
+            if(rit.getCrowdness().equals("LOW"))
             {
                 crowdTV.setText("Rustig");
             }

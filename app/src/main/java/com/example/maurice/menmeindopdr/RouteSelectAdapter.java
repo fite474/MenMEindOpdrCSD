@@ -34,7 +34,7 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
 
-        // Mural ophalen
+        // Reis ophalen
         TreinReis treinReis = getItem(position);
 
         // View aanmaken of herbruiken
@@ -48,17 +48,10 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
         if(treinReis != null)
         {
             destination = convertView.findViewById(R.id.destinationTV);
-            destination.setText(treinReis.getFirstDestination());
+            destination.setText(treinReis.getLegs().get(0).getDestination());
 
             trainImage = convertView.findViewById(R.id.trainIconDetail);
-            if (treinReis.getLegs().get(0).getType() == TreinType.INTERCITY)
-            {
-                trainImage.setImageResource(R.drawable.trainicon_ic);
-            }
-            else
-            {
-                trainImage.setImageResource(R.drawable.trainicon_spr);
-            }
+            chooseSetTrainImage(treinReis);
 
             trackImage = convertView.findViewById(R.id.trackIcon);
             trackImage.setImageResource(R.drawable.track);
@@ -73,47 +66,53 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
             transfers.setText(String.valueOf(treinReis.getAantalOverstappen()));
 
             departureTime = convertView.findViewById(R.id.depTimeTextView);
-            String departuretime = "";
-            if(treinReis.getVertrektijd().getMinutes() < 10)
-            {
-                departuretime = ""+ treinReis.getVertrektijd().getHours() + ":0" + treinReis.getVertrektijd().getMinutes();
-                Log.d("VERTREKTIJDTAGGGG", String.valueOf(treinReis.getVertrektijd().getHours()));
-            }
-            else
-            {
-                departuretime = ""+ treinReis.getVertrektijd().getHours() + ":"+ treinReis.getVertrektijd().getMinutes();
-                Log.d("VERTREKTIJDTAGGGG", String.valueOf(treinReis.getVertrektijd().getHours()));
-            }
-            departureTime.setText(departuretime);
+            departureTime.setText(treinReis.getVertrektijd().toString());
 
             arrivalTime = convertView.findViewById(R.id.arrTimeTV);
-            String arrivaltime = "";
-            if(treinReis.getAankomsttijd().getMinutes() < 10)
-            {
-                arrivaltime = ""+ treinReis.getAankomsttijd().getHours() + ":0" + treinReis.getAankomsttijd().getMinutes();
-            }
-            else
-            {
-                arrivaltime = ""+ treinReis.getAankomsttijd().getHours() + ":"+ treinReis.getAankomsttijd().getMinutes();
-            }
-            arrivalTime.setText(arrivaltime);
+            arrivalTime.setText(treinReis.getAankomsttijd().toString());
 
             journeyDuration = convertView.findViewById(R.id.durTV);
-            int minutes = treinReis.getRitDuur() % 60;
-            int hours = treinReis.getRitDuur() / 60;
-
-            String ritduur = " ";
-            if(minutes < 10)
-            {
-                ritduur = hours + ":0"+minutes + " uur";
-            }
-            else
-            {
-                ritduur =hours + ":"+minutes + " uur";
-            }
-            journeyDuration.setText(ritduur);
+            journeyDuration.setText(treinReis.getRitDuration().toString());
 
         }
         return convertView;
+    }
+
+    private void chooseSetTrainImage(TreinReis treinReis)
+    {
+        TreinType type = treinReis.getLegs().get(0).getType();
+        TimeStamp departure = treinReis.getVertrektijd();
+        if(departure.getHours() <7 || departure.getHours() >18)
+        {
+            if (type == TreinType.INTERCITY)
+            {
+                trainImage.setImageResource(R.drawable.trainicon_ic_night);
+            }
+            else if(type == TreinType.SPRINTER)
+            {
+                trainImage.setImageResource(R.drawable.trainicon_spr_night);
+            }
+            else
+            {
+                trainImage.setImageResource(R.drawable.trainicon_icd_night);
+            }
+        }
+        else
+        {
+            if (type == TreinType.INTERCITY)
+            {
+                trainImage.setImageResource(R.drawable.trainicon_ic_day);
+            }
+            else if(type == TreinType.SPRINTER)
+            {
+                trainImage.setImageResource(R.drawable.trainicon_spr_day);
+            }
+            else
+            {
+                trainImage.setImageResource(R.drawable.trainicon_icd_day);
+            }
+        }
+
+
     }
 }

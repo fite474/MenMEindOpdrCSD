@@ -1,5 +1,7 @@
 package com.example.maurice.menmeindopdr.NSData;
 
+import com.example.maurice.menmeindopdr.TimeStamp;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,16 +9,25 @@ public class TreinRit implements Serializable
 {                                   // leg/
     private String startStation;    //---> origin/"name"
     private String endStation;      //---> destination/"name"
-    private Date departureTime;     //---> origin/"plannedDateTime"
-    private Date arrivalTime;       //---> destination/"plannedDateTime"
+    private TimeStamp departureTime;     //---> origin/"plannedDateTime"
+    private TimeStamp arrivalTime;       //---> destination/"plannedDateTime"
     private String departureTrack;  //---> origin/"plannedTrack"
     private String arrivalTrack;    //---> destination/"plannedTrack"
     private String ritDuration;     //---> zelf uitrekenen
     private String crowdness;       //--->"crowdForecast"
     private TreinType type;
+    private String destination;
 
-    public TreinRit(TreinType type, String crowdness, String startStation, String endStation, Date departureTime, Date arrivalTime, String departureTrack, String arrivalTrack, String ritDuration)
+
+    public String getDestination()
     {
+        return destination;
+    }
+
+    public TreinRit(String destination, TreinType type, String crowdness, String startStation, String endStation, TimeStamp departureTime, TimeStamp arrivalTime, String departureTrack, String arrivalTrack, String ritDuration)
+    {
+        this.destination = destination;
+
         this.type = type;
         this.startStation = startStation;
         this.endStation = endStation;
@@ -38,12 +49,12 @@ public class TreinRit implements Serializable
         return endStation;
     }
 
-    public Date getDepartureTime()
+    public TimeStamp getDepartureTime()
     {
         return departureTime;
     }
 
-    public Date getArrivalTime()
+    public TimeStamp getArrivalTime()
     {
         return arrivalTime;
     }

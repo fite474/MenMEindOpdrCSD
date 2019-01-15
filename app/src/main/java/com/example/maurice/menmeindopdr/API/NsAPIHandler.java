@@ -16,6 +16,7 @@ import com.example.maurice.menmeindopdr.NSData.StationType;
 import com.example.maurice.menmeindopdr.NSData.TreinReis;
 import com.example.maurice.menmeindopdr.NSData.TreinRit;
 import com.example.maurice.menmeindopdr.NSData.TreinType;
+import com.example.maurice.menmeindopdr.TimeStamp;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -93,65 +94,64 @@ public class NsAPIHandler  implements Serializable
                             JSONObject startLeg = legs.getJSONObject(0);
                             JSONObject origin = startLeg.getJSONObject("origin");
                             String destination = startLeg.getString("direction");
-
                             String departureTrack = origin.getString("plannedTrack");
                             String departureTime = origin.getString("plannedDateTime");
                             JSONObject endleg;
-                            if (transfers > 0)
-                            {
-                                endleg = legs.getJSONObject(transfers);
-                            }
-                            else
-                            {
-                                endleg = startLeg;
-                            }
-                            String arrivalTime = endleg.getJSONObject("destination").getString("plannedDateTime");
-
-                            int plusIndex = arrivalTime.indexOf('+');
-                            String cutArrivalTime = arrivalTime.substring(0, plusIndex - 1);
-                            String cutDepartTime = departureTime.substring(0, plusIndex - 1);
-
-                            SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd'T'hh:mm:ss");
-                            Date vertrekTijd = format.parse(cutDepartTime);
-                            Date aankomstTijd = format.parse(cutArrivalTime);
 
 
 
-                            TreinReis rit = new TreinReis(duration, transfers, vertrekTijd, aankomstTijd, departureTrack, destination);
+                            JSONObject finalRit = trips.getJSONObject(trips.length()-1);
+                            String destinationStation = legs.getJSONObject(legs.length()-1).
+                                    getJSONObject("destination").
+                                    getString("name");
+
+                            String depStation = origin.getString("name");
+
+
+
 
                             for(int y = 0; y < legs.length(); y++)
                             {
                                 JSONObject leg = legs.getJSONObject(y);
+                                String legDestStationName = leg.getString("direction");
                                 JSONObject legOrigin = leg.getJSONObject("origin");
                                 JSONObject legDestination = leg.getJSONObject("destination");
 
                                 String startStation = legOrigin.getString("name");
                                 String legDepTime = legOrigin.getString("plannedDateTime");
-                                String cutLegDepTime = legDepTime.substring(0, plusIndex - 1);
-                                Date legDeparture = format.parse(cutLegDepTime);
+                                String cutLegDepTime = legDepTime.substring(10,16);
+                                String legDepHourString = cutLegDepTime.substring(1,3);
+                                String legDepMinString = cutLegDepTime.substring(4,6);
+                                int legDepartureHour = Integer.valueOf(legDepHourString);
+                                int legDepartureMin = Integer.valueOf(legDepMinString);
+                                TimeStamp legDeparture = new TimeStamp(legDepartureHour, legDepartureMin);
+
+
                                 String legDepTrack = legOrigin.getString("plannedTrack");
 
                                 String endStation = legDestination.getString("name");
                                 String legArrTime = legDestination.getString("plannedDateTime");
-                                String cutlegArrTime = legArrTime.substring(0, plusIndex - 1);
-                                Date legArrival = format.parse(cutlegArrTime);
+                                String cutLegArrTime = legArrTime.substring(10,16);
+                                String legArrHour = cutLegArrTime.substring(1,3);
+                                String legArrMin = cutLegArrTime.substring(4,6);
+                                int legArrivalHour = Integer.valueOf(legArrHour);
+                                int legArrivalMin = Integer.valueOf(legArrMin);
+                                Log.d("TIME-TAG-ARRIVAL", "first cut:"+ cutLegArrTime + " ---> cut in hours and minutes: "+ legArrHour + ":"+legArrMin + "  --> cut in integers: " +legArrivalHour + ":" + legArrivalMin );
+
+                                TimeStamp legArrival = new TimeStamp(legArrivalHour, legArrivalMin);
+
+                                Log.d("TIME-TAG-ARRIVAL", legArrival.toString());
+
+
+
                                 String legArrTrack = legDestination.getString("plannedTrack");
 
                                 String treintype = leg.getJSONObject("product").getString("categoryCode");
 
                                 String crowdness = leg.getString("crowdForecast");
-                                int totalMinutes = (((legArrival.getHours()*60)+legArrival.getMinutes()) - ((legDeparture.getHours()*60)+legDeparture.getMinutes()));
-                                int rideHours = totalMinutes / 60;
-                                int rideMinutes = totalMinutes % 60;
-                                String rideDuration = "";
-                                if(rideMinutes < 10)
-                                {
-                                    rideDuration = rideHours + ":0"+ rideMinutes;
-                                }
-                                else
-                                {
-                                    rideDuration = rideHours + ":" + rideMinutes;
-                                }
+                                int totalMinutes = (legArrival.getTotalMinutes() - legDeparture.getTotalMinutes());
+                                TimeStamp rideTime = new TimeStamp(totalMinutes);
+
                                 TreinType type;
                                 if (treintype.equals("IC"))
                                 {
@@ -165,9 +165,12 @@ public class NsAPIHandler  implements Serializable
                                 {
                                     type = TreinType.INTERCITY_DIRECT;
                                 }
-                                allLegs.add(new TreinRit(type, crowdness, startStation, endStation, legDeparture, legArrival, legDepTrack, legArrTrack, rideDuration));
+                                allLegs.add(new TreinRit(legDestStationName, type, crowdness, startStation, endStation, legDeparture, legArrival, legDepTrack, legArrTrack, rideTime.toString()));
 
                             }
+                                TreinReis rit = new TreinReis(depStation, destinationStation, duration, transfers, null, null, departureTrack, destination);
+                                rit.setVertrektijd(allLegs.get(0).getDepartureTime());
+                                rit.setAankomsttijd(allLegs.get(allLegs.size()-1).getArrivalTime());
                                 rit.setLegs(allLegs);
 
                             ritten.add(rit);
@@ -177,9 +180,6 @@ public class NsAPIHandler  implements Serializable
 
 
                     } catch (JSONException e)
-                    {
-                        e.printStackTrace();
-                    } catch (ParseException e)
                     {
                         e.printStackTrace();
                     }
@@ -260,8 +260,15 @@ public class NsAPIHandler  implements Serializable
                                 Station station = new Station(code, type, naam, country, uicCode, lat, lon);
                                 stations.add(station);
                             }
+                            if(stations.size() >0)
+                            {
+                                listener.onStationsAvailable(stations);
+                            }
+                            else
+                            {
+                                listener.noStationAvailable();
+                            }
 
-                            listener.onStationsAvailable(stations);
                         } catch (JSONException e)
                         {
                             e.printStackTrace();

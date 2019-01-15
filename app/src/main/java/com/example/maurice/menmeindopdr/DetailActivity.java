@@ -34,24 +34,27 @@ public class DetailActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         reis = (TreinReis) getIntent().getSerializableExtra("reis");
+        legs = new ArrayList<>();
+        legs = reis.getLegs();
         vanStationTV = findViewById(R.id.fromStationTV);
-        vanStationTV.setText(reis.getLegs().get(reis.getLegs().size() - 1).getStartStation());
+        vanStationTV.setText(reis.getVertrekStation());
         naarStationTV = findViewById(R.id.toStationTV);
-        naarStationTV.setText(reis.getLegs().get(reis.getLegs().size() - 1).getEndStation());
+        naarStationTV.setText(reis.getAankomstStation());
         uitlegTV = findViewById(R.id.uitlegTV);
         legListView = findViewById(R.id.travelListView);
         trainIconView = findViewById(R.id.detailTrainIcon);
 
+        trainIconView.setImageResource(R.drawable.trainicon_ic_night);
 
 
-        legs = new ArrayList<>();
-        legs = reis.getLegs();
 
         adapter = new LegAdapter(
                 getApplicationContext(),
                 legs
         );
         legListView.setAdapter(adapter);
+        adapter.setNotifyOnChange(true);
+        adapter.addAll(legs);
 
     }
 }

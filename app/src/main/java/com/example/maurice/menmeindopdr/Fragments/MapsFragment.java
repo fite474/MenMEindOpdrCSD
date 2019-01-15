@@ -328,7 +328,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 //                                dlgAlert.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
 //
 //                                    public void onClick(DialogInterface arg0, int arg1) {
-//                                        Intent intent = new Intent(getContext(), MainActivity.class);
+//                                        Intent intent = new Intent(getContext(), StartingActivity.class);
 //                                        startActivity(intent);
 //
 //                                    }

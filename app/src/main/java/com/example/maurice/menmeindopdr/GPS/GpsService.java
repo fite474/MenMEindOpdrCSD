@@ -19,13 +19,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.maurice.menmeindopdr.App;
-import com.example.maurice.menmeindopdr.MainActivity;
+import com.example.maurice.menmeindopdr.StartingActivity;
 import com.example.maurice.menmeindopdr.R;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Marker;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GpsService extends Service {
     public final static String PREVIOUS_LOCATION_BUNDLE_TAG = "PREVIOUS_LOCATION_BUNDLE_TAG";
@@ -89,7 +84,7 @@ public class GpsService extends Service {
     }
 
     private void startForeground() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, StartingActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);

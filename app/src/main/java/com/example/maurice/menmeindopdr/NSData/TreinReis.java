@@ -1,5 +1,7 @@
 package com.example.maurice.menmeindopdr.NSData;
 
+import com.example.maurice.menmeindopdr.TimeStamp;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,16 +10,24 @@ public class TreinReis implements Serializable
 {
     private int ritDuur;
     private int aantalOverstappen;
-    private Date vertrektijd;
-    private Date aankomsttijd;
+    private TimeStamp vertrektijd;
+    private TimeStamp aankomsttijd;
     //private TreinType treinType;
     private String vertrekSpoor;
+    private String vertrekStation;
+    private String aankomstStation;
     private String firstDestination; //TODO: later arrayList van destinations, maakt het makkelijker, voor nu eentje
     private ArrayList<TreinRit> legs = new ArrayList<>();
+    private TimeStamp ritDuration;
 
-    public TreinReis(int ritDuur, int aantalOverstappen, Date vertrektijd, Date aankomsttijd, String vertrekSpoor, String firstDestination)
+
+    public TreinReis(String vertrek, String aankomst, int ritDuur, int aantalOverstappen, TimeStamp vertrektijd, TimeStamp aankomsttijd, String vertrekSpoor, String firstDestination)
     {
+        this.vertrekStation = vertrek;
+        this.aankomstStation = aankomst;
+
         this.ritDuur = ritDuur;
+        setRitDuration(this.ritDuur);
         this.aantalOverstappen = aantalOverstappen;
         this.vertrektijd = vertrektijd;
         this.aankomsttijd = aankomsttijd;
@@ -25,6 +35,33 @@ public class TreinReis implements Serializable
         this.vertrekSpoor = vertrekSpoor;
         this.firstDestination = firstDestination;
 
+    }
+
+
+    public TimeStamp getRitDuration()
+    {
+        return ritDuration;
+    }
+
+    public void setRitDuration(TimeStamp ritDuration)
+    {
+        this.ritDuration = ritDuration;
+    }
+
+    private void setRitDuration(int minutes)
+    {
+        TimeStamp timeStamp = new TimeStamp(minutes);
+        setRitDuration(timeStamp);
+    }
+
+    public String getVertrekStation()
+    {
+        return vertrekStation;
+    }
+
+    public String getAankomstStation()
+    {
+        return aankomstStation;
     }
     public void setLegs(ArrayList<TreinRit> legs)
     {
@@ -46,12 +83,22 @@ public class TreinReis implements Serializable
         return aantalOverstappen;
     }
 
-    public Date getVertrektijd()
+    public TimeStamp getVertrektijd()
     {
         return vertrektijd;
     }
 
-    public Date getAankomsttijd()
+    public void setVertrektijd(TimeStamp vertrektijd)
+    {
+        this.vertrektijd = vertrektijd;
+    }
+
+    public void setAankomsttijd(TimeStamp aankomsttijd)
+    {
+        this.aankomsttijd = aankomsttijd;
+    }
+
+    public TimeStamp getAankomsttijd()
     {
         return aankomsttijd;
     }

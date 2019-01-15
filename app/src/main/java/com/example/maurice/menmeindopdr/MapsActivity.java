@@ -40,7 +40,7 @@ public class MapsActivity extends AppCompatActivity {
     TreinReis treinReis;
     LocalTime currentTime;
 
-    Date requiredArivalTime;
+    TimeStamp requiredArivalTime;
 
 
     @Override
@@ -77,7 +77,7 @@ public class MapsActivity extends AppCompatActivity {
 
         //arrow = findViewById(R.id.compassImageViewId);
 
-//        selectedRoute = getIntent().getIntExtra(MainActivity.INTENT_TAG_SELECT_ROUTE, SelectedRoute.NONE);
+//        selectedRoute = getIntent().getIntExtra(StartingActivity.INTENT_TAG_SELECT_ROUTE, SelectedRoute.NONE);
 //
 //        listButton = findViewById(R.id.list_button_mapsactivity);
 //        listButton.setText(R.string.List);

@@ -1,258 +1,204 @@
 package com.example.maurice.menmeindopdr;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.MultiAutoCompleteTextView;
-import android.widget.TextView;
 
 import com.example.maurice.menmeindopdr.API.NSAPICallType;
 import com.example.maurice.menmeindopdr.API.NsAPIHandler;
 import com.example.maurice.menmeindopdr.API.NsListener;
 import com.example.maurice.menmeindopdr.NSData.Station;
 import com.example.maurice.menmeindopdr.NSData.TreinReis;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NsListener
 {
-    NsAPIHandler api;
-    Button zoekStationButton;
-    ListView foundStationListView;
-    LatLng currentDeviceLocation;
-    EditText gezochtStation;
-    Station closestStation;
-    Station destinationStation;
-    Location closestLocation;
-    ArrayList<Station> stations;
-    TextView foundStation;
-    ImageView backgr;
-    ArrayList<TreinReis> ritten;
-    ArrayAdapter<String> adapter;
-    ArrayList<String> foundStations;
-    ArrayList<Station> foundStationList = new ArrayList<>();
-    String stationToEnd;
+    private ImageView backgroundImageView;
+    private final static String TAG = MainActivity.class.getSimpleName();
+    private boolean locationPermissionGranted;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private FusedLocationProviderClient mFuseLocationProviderClient;
+    private NsAPIHandler api;
+
+    Location currentLocation;
+
+    boolean locationFound = false;
+
 
     private static int TIME_OUT = 2420;
 
-    MultiAutoCompleteTextView completeTextView;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        this.api = new NsAPIHandler(getApplicationContext(), this);
-        currentDeviceLocation = new LatLng(getIntent().getDoubleExtra("currentLocationLat", 1.0),
-                getIntent().getDoubleExtra("currentLocationLong", 1.0));
-        closestStation = (Station) getIntent().getSerializableExtra("closestStation");
-        zoekStationButton = findViewById(R.id.zoekStationButton);
-        foundStationListView = findViewById(R.id.foundStationsListView);
-        foundStation = findViewById(R.id.closestStationTextview);
-        foundStation.setText(closestStation.getName());
-        backgr = findViewById(R.id.foundImageView);
-        backgr.setImageResource(R.drawable.found_station);
-        gezochtStation = findViewById(R.id.searchStation);
+        setContentView(R.layout.activity_starting);
+        api = new NsAPIHandler(getApplicationContext(), this);
+
+        backgroundImageView = findViewById(R.id.start_backgrImageView);
+
+        backgroundImageView.setImageResource(R.drawable.startscreenv1);
+
+        getLocationPermission();
+        getDeviceLocation();
 
 
-        foundStations = new ArrayList<>();
-
-        this.stations = new ArrayList<>();
-        api.HandleAPICall(NSAPICallType.FIND_STATIONS, null, null);
-        this.ritten = new ArrayList<>();
-        adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.listview_item_pick_station, R.id.stationNameTV, foundStations);
-        adapter.setNotifyOnChange(true);
-        foundStationListView.setAdapter(adapter);
-
-        zoekStationButton.setOnClickListener(v -> {
-            gezochtStation.onEditorAction(EditorInfo.IME_ACTION_DONE);
-//            final String startingStation = closestStation.getName().toLowerCase();
-            if(gezochtStation.getText().length() >=1)
-            {
-                stationToEnd = String.valueOf(gezochtStation.getText()).toLowerCase();
-                boolean validStation = false;
-                adapter.clear();
-                foundStations.clear();
-                for (int i = 0; i < stations.size(); i++)
-                {
-                    Station currStation = stations.get(i);
-                    if (currStation.getName().toLowerCase().contains(stationToEnd))
-                    {
-                        validStation = true;
-                        foundStationList.add(currStation);
-                        foundStations.add(currStation.getName());
-                    }
-
-                }
-                if(validStation)
-                {
-                    //Nothing, this happens below
-                }
-                else
-                {
-                   foundStations.add("Geen overeenkomstige stations.");
-
-                }
-            }
-            else
-            {
-                foundStations.add("Voer eerst een station in");
-//                adapter.addAll(foundStations);
-            }
-            gezochtStation.setText("");
-        });
-
-        foundStationListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
-            {
-                Log.i("STATION-TAG", String.valueOf(position));
-                Intent intent = new Intent(
-                        getApplicationContext(),
-                        RouteSelectActivity.class
-                );
-
-                String stationName = foundStations.get(position);
-                if(checkValidStationName(stationName))
-                {
-                    searchForStation(stationName);
-
-                }
-                else
-                {
-
-                }
-
-            }
-
-            private boolean checkValidStationName(String stationName)
-            {
-                boolean valid = true;
-                if(stationName.equals("Geen overeenkomstige stations."))
-                {
-                    valid = false;
-                }
-                else if(stationName.equals("Voer eerst een station in"))
-                {
-                    valid = false;
-                }
-                else if (stationName.equals("Ritten worden gezocht!"))
-                {
-                    valid = false;
-                }
-                else if(stationName.equals("Ritten gevonden!"))
-                {
-                    valid = false;
-                }
-                else if(stationName.equals("Geen reizen gevonden."))
-                {
-                    valid = false;
-                }
-                return valid;
-            }
-
-            private void searchForStation(String name)
-            {
-                int i = 0;
-                boolean found = false;
-                while(!found && i < stations.size())
-                {
-                    Station currStation = stations.get(i);
-                    if(currStation.getName().equals(name))
-                    {
-                        destinationStation = currStation;
-                        found = true;
-                    }
-                    i++;
-                }
-                api.HandleAPICall(NSAPICallType.FROM_TO_REQUEST, closestStation.getCode(), destinationStation.getCode());
-                adapter.clear();
-                foundStations.clear();
-                foundStations.add("Ritten worden gezocht!");
-
-            }
-
-            private void refillList()
-            {
-                foundStations.clear();
-                for(int i = 0; i < foundStationList.size(); i++)
-                {
-                    foundStations.add(foundStationList.get(i).getName());
-                }
-                adapter.clear();
-//                adapter.addAll(foundStations);
-
-            }
-        });
-
-    }
-
-    @Override
-    public void onBackPressed()
-    {
 
 
     }
 
-    @Override
-    public void onStationsAvailable(ArrayList<Station> stations)
-    {
-        this.stations = stations;
-    }
-
-    @Override
-    public void noStationAvailable()
+    private void startNextActivity(Station closestStation, Location closestLocation)
     {
 
-    }
-
-    @Override
-    public void onJourneysAvailable(ArrayList<TreinReis> ritten)
-    {
-        this.ritten = ritten;
-        foundStations.clear();
-        adapter.clear();
-        foundStations.add("Ritten gevonden!");
-//        adapter.addAll(foundStations);
         new Handler().postDelayed(new Runnable()
         {
             @Override
             public void run()
             {
-                Intent intent = new Intent(
-                        getApplicationContext(),
-                        RouteSelectActivity.class
-                );
-                intent.putExtra("startStation", closestStation);
-                intent.putExtra("destinationStation", destinationStation);
-                intent.putExtra("ritten", ritten);
+                Intent i = new Intent(App.getContext(), StartingActivity.class);
 
-                startActivity(intent);
+                double currentLocationLat = currentLocation.getLatitude();
+                double currentLocationLong = currentLocation.getLongitude();
+                i.putExtra("currentLocationLat", currentLocationLat);
+                i.putExtra("currentLocationLong", currentLocationLong);
+                i.putExtra("closestStation", closestStation);
+                i.putExtra("closestLocation", closestLocation);
+                startActivity(i);
             }
         }, TIME_OUT);
+
+            //finish();
+    }
+
+
+
+    private void getLocationPermission() {
+        Log.d(TAG, "getLocationPermission: ");
+        if (ContextCompat.checkSelfPermission(App.getContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true;
+            //updateLocationUI();
+        }
+        else {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            getLocationPermission();
+
+        }
+    }
+
+    private void getDeviceLocation(){
+        Log.d(TAG, "getDeviceLocation:");
+
+        mFuseLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+
+        try {
+            if(locationPermissionGranted) {
+                Task<Location> location = mFuseLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener<Location>()
+                {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task)
+                    {
+                        if (task.isSuccessful()) {
+                            try {
+                                Log.d(TAG, "onComplete: ");
+                                currentLocation =  task.getResult();
+                                api.HandleAPICall(NSAPICallType.FIND_STATIONS,  null, null);
+                                //moveCamera(new LatLng(foundStationListView.getLatitude(), foundStationListView.getLongitude()), DEFAULT_ZOOM);
+                            }
+                            catch(Exception e){
+
+                            }
+                        } else {
+                            Log.d(TAG, "current location");
+                        }
+                    }
+                });
+            }
+        }catch (SecurityException e){
+            Log.e(TAG, "SecurityException");
+
+        }
+        catch (Exception ex){
+            Log.e(TAG, "getDeviceLocation: "+ ex.toString());
+
+        }
+    }
+
+
+    @Override
+    public void onStationsAvailable(ArrayList<Station> stations)
+    {
+        Station closestStation = stations.get(0);
+        Location closestStationLocation = new Location("closest Station");
+        closestStationLocation.setLatitude(closestStation.getLatitude());
+        closestStationLocation.setLongitude(closestStation.getLongitude());
+
+        float closestStationdistance = currentLocation.distanceTo(closestStationLocation);
+        for(int i = 1; i < stations.size()-1; i++)
+        {
+          Station thisStation = stations.get(i);
+
+          Location stationLocation = new Location("station location");
+          stationLocation.setLongitude(thisStation.getLongitude());
+          stationLocation.setLatitude(thisStation.getLatitude());
+
+          float distanceToStation = currentLocation.distanceTo(stationLocation);
+
+          if(distanceToStation < closestStationdistance)
+          {
+              closestStation = thisStation;
+              closestStationLocation = stationLocation;
+              closestStationdistance = distanceToStation;
+          }
+        }
+        startNextActivity(closestStation, closestStationLocation);
+    }
+    private int i = 1;
+    @Override
+    public void noStationAvailable()
+    {
+        if(i == 1)
+        {
+            backgroundImageView.setImageResource(R.drawable.startscreen_notfound);
+
+        }
+
+        if(i == 5)
+        {
+            backgroundImageView.setImageResource(R.drawable.startscreen_error);
+        }
+        else if(i < 5)
+        {
+            api.HandleAPICall(NSAPICallType.FIND_STATIONS, null, null);
+        }
+        i++;
+    }
+
+    @Override
+    public void onJourneysAvailable(ArrayList<TreinReis> ritten)
+    {
 
     }
 
     @Override
     public void noJourneyAvailable()
     {
-        foundStations.clear();
-        adapter.clear();
-        foundStations.add("Geen reizen gevonden.");
-//        adapter.addAll(foundStations);
 
     }
-
-
 }
