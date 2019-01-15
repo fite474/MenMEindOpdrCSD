@@ -37,6 +37,25 @@ public class TreinReis implements Serializable
 
     }
 
+    @Override
+    public String toString()
+    {
+        return "TreinReis{" +
+                "ritDuur=" + ritDuur +
+                ", aantalOverstappen=" + aantalOverstappen +
+                ", vertrektijd=" + vertrektijd +
+                ", aankomsttijd=" + aankomsttijd +
+                ", eersteTreinType=" + eersteTreinType +
+                ", vertrekSpoor='" + vertrekSpoor + '\'' +
+                ", vertrekStation='" + vertrekStation + '\'' +
+                ", aankomstStation='" + aankomstStation + '\'' +
+                ", firstDestination='" + firstDestination + '\'' +
+                ", legs=" + legs +
+                ", ritDuration=" + ritDuration +
+                ", cancelled=" + cancelled +
+                '}';
+    }
+
     public TreinReis(int ritDuur, int aantalOverstappen, TimeStamp vertrektijd, TimeStamp aankomsttijd, TreinType eersteTreinType, String aankomstStation, String firstDestination, ArrayList<TreinRit> legs, int ritDuration)
     {
         this.ritDuur = ritDuur;
@@ -131,5 +150,10 @@ public class TreinReis implements Serializable
     public ArrayList<TreinRit> getLegs()
     {
         return legs;
+    }
+
+    public boolean isCancelled()
+    {
+        return cancelled;
     }
 }

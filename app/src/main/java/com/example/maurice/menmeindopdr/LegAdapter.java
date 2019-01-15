@@ -27,6 +27,8 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
     TextView startTimeTV;
     TextView endTimeTV;
     TextView crowdTV;
+    TextView depAtTV;
+    TextView arrAtTV;
 
     public LegAdapter(Context context, ArrayList<TreinRit> items)
     {
@@ -59,8 +61,19 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
             arrTrackIcon = convertView.findViewById(R.id.arrTrackIcon);
             background = convertView.findViewById(R.id.backgroundLegIMV);
 
+            arrAtTV = convertView.findViewById(R.id.arrAtTV);
+            depAtTV = convertView.findViewById(R.id.omtv1);
+            arrAtTV.setText(R.string.om);
+            depAtTV.setText(R.string.om);
 
+            if(rit.isCancelled())
+            {
 
+            }
+            else
+            {
+
+            }
             if(rit.getType().equals(TreinType.SPRINTER))
             {
                 trainIcon.setImageResource(R.drawable.trainicon_spr);
@@ -79,13 +92,14 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
             depTrackIcon.setImageResource(R.drawable.track);
             arrTrackIcon.setImageResource(R.drawable.track);
 
+
             if(rit.getCrowdness().equals("LOW"))
             {
-                crowdTV.setText("Rustig");
+                crowdTV.setText(R.string.drukte_rustig);
             }
             else
             {
-                crowdTV.setText("Druk");
+                crowdTV.setText(R.string.drukte_druk);
             }
 
 

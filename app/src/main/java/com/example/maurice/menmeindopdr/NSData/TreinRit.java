@@ -98,6 +98,29 @@ public class TreinRit implements Serializable
         return type;
     }
 
+    @Override
+    public String toString()
+    {
+        return "TreinRit{" +
+                "startStation='" + startStation + '\'' +
+                ", endStation='" + endStation + '\'' +
+                ", departureTime=" + departureTime +
+                ", arrivalTime=" + arrivalTime +
+                ", departureTrack='" + departureTrack + '\'' +
+                ", arrivalTrack='" + arrivalTrack + '\'' +
+                ", ritDuration='" + ritDuration + '\'' +
+                ", crowdness='" + crowdness + '\'' +
+                ", type=" + type +
+                ", destination='" + destination + '\'' +
+                ", cancelled=" + cancelled +
+                '}';
+    }
+
+    public boolean isCancelled()
+    {
+        return cancelled;
+    }
+
     public int getDepHours()
     {
         return this.departureTime.getHours();

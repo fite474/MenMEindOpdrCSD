@@ -11,4 +11,7 @@
     <string name="teLaatBerichtTwee">do you want to select a different journey</string>
     <string name="geenOvereenkomst">No matching stations.</string>
     <string name="detailTransferInfo">Your transfers during this journey:</string>
+    <string name="drukte_druk">Crowded</string>
+    <string name="drukte_rustig">Uncrowded</string>
+    <string name="om">At:</string>
 </resources>

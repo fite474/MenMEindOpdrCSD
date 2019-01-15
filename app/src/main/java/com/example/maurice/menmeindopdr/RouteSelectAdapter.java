@@ -33,7 +33,7 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
-
+        Log.d("JOURNEY-TAG", " "+position);
         // Reis ophalen
         TreinReis treinReis = getItem(position);
 
@@ -48,7 +48,8 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
         if(treinReis != null)
         {
             destination = convertView.findViewById(R.id.destinationTV);
-            destination.setText(treinReis.getFirstDestination());
+
+
 
             trainImage = convertView.findViewById(R.id.trainIconDetail);
             chooseSetTrainImage(treinReis);
@@ -60,7 +61,7 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
             transferImage.setImageResource(R.drawable.transfer);
 
             departureTrack = convertView.findViewById(R.id.trackText);
-            departureTrack.setText(treinReis.getVertrekSpoor());
+
 
             transfers = convertView.findViewById(R.id.transferText);
             transfers.setText(String.valueOf(treinReis.getAantalOverstappen()));
@@ -74,6 +75,16 @@ public class RouteSelectAdapter extends ArrayAdapter<TreinReis> {
             journeyDuration = convertView.findViewById(R.id.durTV);
             journeyDuration.setText(treinReis.getRitDuration().toString());
 
+            if(treinReis.isCancelled())
+            {
+                destination.setText("CANCELLED");
+                departureTrack.setText("-");
+            }
+            else
+            {
+                departureTrack.setText(treinReis.getVertrekSpoor());
+                destination.setText(treinReis.getFirstDestination());
+            }
         }
         return convertView;
     }

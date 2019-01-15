@@ -21,6 +21,8 @@
     <string name="rittenWordenGezocht">Ritten worden gezocht!</string>
     <string name="rittenGevonde">Ritten gevonden!</string>
     <string name="geenRittenGevonde">Geen reizen gevonden.</string>
-    <string name="">Je overstappen voor deze reis:</string>
     <string name="detailTransferInfo">Je overstappen deze reis:</string>
+    <string name="drukte_druk">Druk</string>
+    <string name="drukte_rustig">Rustig</string>
+    <string name="om">Om:</string>
 </resources>
