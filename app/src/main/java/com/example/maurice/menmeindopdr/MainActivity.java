@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements NsListener
 
         backgroundImageView = findViewById(R.id.start_backgrImageView);
 
-        backgroundImageView.setImageResource(R.drawable.startscreenv1);
+        backgroundImageView.setImageResource(R.drawable.startscreen);
 
         getLocationPermission();
         getDeviceLocation();
