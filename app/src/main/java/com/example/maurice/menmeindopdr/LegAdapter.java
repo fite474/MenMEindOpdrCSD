@@ -17,6 +17,8 @@ import java.util.ArrayList;
 public class LegAdapter extends ArrayAdapter<TreinRit>
 {
     ImageView trainIcon;
+    ImageView depTrackIcon;
+    ImageView arrTrackIcon;
     TextView startStationTV;
     TextView endStationTV;
     TextView startTrackTV;
@@ -52,6 +54,9 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
             startTimeTV = convertView.findViewById(R.id.depTimeTV);
             endTimeTV = convertView.findViewById(R.id.arrTimeTV);
             crowdTV = convertView.findViewById(R.id.crowdnessTV);
+            depTrackIcon = convertView.findViewById(R.id.depTrackIcon);
+            arrTrackIcon = convertView.findViewById(R.id.arrTrackIcon);
+
 
             if(rit.getType().equals(TreinType.SPRINTER))
             {
@@ -68,6 +73,8 @@ public class LegAdapter extends ArrayAdapter<TreinRit>
             endTrackTV.setText(rit.getArrivalTrack());
             startTimeTV.setText(rit.getDepartureTime().toString());
             endTimeTV.setText(rit.getArrivalTime().toString());
+            depTrackIcon.setImageResource(R.drawable.track);
+            arrTrackIcon.setImageResource(R.drawable.track);
 
             if(rit.getCrowdness().equals("LOW"))
             {

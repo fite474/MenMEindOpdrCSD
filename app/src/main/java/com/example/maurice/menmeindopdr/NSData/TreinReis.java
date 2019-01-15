@@ -18,13 +18,13 @@ public class TreinReis implements Serializable
     private String firstDestination; //TODO: later arrayList van destinations, maakt het makkelijker, voor nu eentje
     private ArrayList<TreinRit> legs = new ArrayList<>();
     private TimeStamp ritDuration;
+    private boolean cancelled;
 
 
     public TreinReis(String vertrek, String aankomst, int ritDuur, int aantalOverstappen, TimeStamp vertrektijd, TimeStamp aankomsttijd, String vertrekSpoor, String firstDestination)
     {
         this.vertrekStation = vertrek;
         this.aankomstStation = aankomst;
-
         this.ritDuur = ritDuur;
         setRitDuration(this.ritDuur);
         this.aantalOverstappen = aantalOverstappen;
@@ -33,9 +33,24 @@ public class TreinReis implements Serializable
 
         this.vertrekSpoor = vertrekSpoor;
         this.firstDestination = firstDestination;
+        this.cancelled = false;
 
     }
 
+    public TreinReis(int ritDuur, int aantalOverstappen, TimeStamp vertrektijd, TimeStamp aankomsttijd, TreinType eersteTreinType, String aankomstStation, String firstDestination, ArrayList<TreinRit> legs, int ritDuration)
+    {
+        this.ritDuur = ritDuur;
+        this.aantalOverstappen = aantalOverstappen;
+        this.vertrektijd = vertrektijd;
+        this.aankomsttijd = aankomsttijd;
+        this.eersteTreinType = eersteTreinType;
+        this.aankomstStation = aankomstStation;
+        this.firstDestination = firstDestination;
+        this.legs = legs;
+        this.ritDuur = ritDuration;
+        setRitDuration(ritDuur);
+        this.cancelled = true;
+    }
 
     public TimeStamp getRitDuration()
     {
