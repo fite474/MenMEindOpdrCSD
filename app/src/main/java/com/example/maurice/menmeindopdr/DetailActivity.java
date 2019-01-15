@@ -31,6 +31,7 @@ public class DetailActivity extends AppCompatActivity
     private TreinReis reis;
     private ArrayList<TreinRit> legs;
     private ArrayAdapter<TreinRit> adapter;
+    private LatLng startingStation;
 
 
     @Override
@@ -39,6 +40,8 @@ public class DetailActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         reis = (TreinReis) getIntent().getSerializableExtra("reis");
+        startingStation = new LatLng(getIntent().getDoubleExtra("startingStationLat",1.1),
+                getIntent().getDoubleExtra("startingStationLong", 1.1));
         legs = new ArrayList<>();
         legs = reis.getLegs();
         goToMapsButton = findViewById(R.id.goToMapsButton);
@@ -65,10 +68,11 @@ public class DetailActivity extends AppCompatActivity
             );
 
             //LatLng startingStation = new LatLng(reis.get)
+            intent.putExtra("startingStationLat", startingStation.latitude);
+            intent.putExtra("startingStationLong", startingStation.longitude);
 
 
-
-            //intent.putExtra("reis", treinReis);
+            intent.putExtra("reis", reis);
             startActivity(intent);
         }
     });

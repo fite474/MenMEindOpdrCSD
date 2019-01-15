@@ -56,23 +56,23 @@ public class MapsActivity extends AppCompatActivity {
         distance = findViewById(R.id.routeDistance);
         tijdOverInfo = findViewById(R.id.tijdLEftInfoTxt);
         tijdOverValue = findViewById(R.id.tijdOverTxtValue);
-        treinReis = (TreinReis) getIntent().getSerializableExtra("treinReis");
-        listButton = findViewById(R.id.button);
-
-        listButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Intent intent = new Intent(
-                        getApplicationContext(),
-                        DetailActivity.class
-                );
-                intent.putExtra("reis", treinReis);
-                startActivity(intent);
-            }
-        });
-        System.out.println(treinReis.getRitDuur());
+        treinReis = (TreinReis) getIntent().getSerializableExtra("reis");
+//        listButton = findViewById(R.id.button);
+//
+//        listButton.setOnClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View view)
+//            {
+//                Intent intent = new Intent(
+//                        getApplicationContext(),
+//                        DetailActivity.class
+//                );
+//                intent.putExtra("reis", treinReis);
+//                startActivity(intent);
+//            }
+//        });
+//        System.out.println(treinReis.getRitDuur());
 
 //        viewModel = ViewModelProviders.of(this).get(MapsViewModel.class);
 //        viewModel.setRotationDeviceListener(this);
