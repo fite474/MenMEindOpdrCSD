@@ -5,12 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/colorLegBackgroundGrey" />
+
     <android.support.constraint.Guideline
         android:id="@+id/guideline9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.35" />
+        app:layout_constraintGuide_percent="0.3515625" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline10"
@@ -143,6 +157,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="xx"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
         app:layout_constraintBottom_toBottomOf="@+id/depTrackIcon"
         app:layout_constraintEnd_toStartOf="@+id/guideline9"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
@@ -155,6 +170,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="xx:xx"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
         app:layout_constraintBottom_toBottomOf="@+id/textView9"
         app:layout_constraintEnd_toStartOf="@+id/guideline9"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
@@ -169,6 +185,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Om:"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline17"
         app:layout_constraintStart_toStartOf="@+id/guideline10"
@@ -183,6 +200,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="xx"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
         app:layout_constraintBottom_toTopOf="@+id/guideline19"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline17"
@@ -195,6 +213,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="xx:xx"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
         app:layout_constraintBottom_toBottomOf="@+id/arrAtTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline17"

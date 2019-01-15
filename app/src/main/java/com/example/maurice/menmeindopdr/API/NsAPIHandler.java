@@ -87,8 +87,9 @@ public class NsAPIHandler  implements Serializable
                         JSONArray trips = response.getJSONArray("trips");
                         for (int i = 0; i < trips.length(); i++)
                         {
-
+                            allLegs.clear();
                             JSONObject jsonRit = trips.getJSONObject(i);
+
                             int duration = jsonRit.getInt("plannedDurationInMinutes");
                             int transfers = jsonRit.getInt("transfers");
                             JSONArray legs = jsonRit.getJSONArray("legs");
@@ -132,6 +133,7 @@ public class NsAPIHandler  implements Serializable
                             for(int y = 0; y < legs.length(); y++)
                             {
                                 JSONObject leg = legs.getJSONObject(y);
+                                boolean cancelled = leg.getBoolean("cancelled");
                                 String legDestStationName = leg.getString("direction");
                                 JSONObject legOrigin = leg.getJSONObject("origin");
                                 JSONObject legDestination = leg.getJSONObject("destination");
@@ -146,7 +148,6 @@ public class NsAPIHandler  implements Serializable
                                 TimeStamp legDeparture = new TimeStamp(legDepartureHour, legDepartureMin);
 
 
-                                String legDepTrack = legOrigin.getString("plannedTrack");
 
                                 String endStation = legDestination.getString("name");
                                 String legArrTime = legDestination.getString("plannedDateTime");
@@ -163,7 +164,7 @@ public class NsAPIHandler  implements Serializable
 
 
 
-                                String legArrTrack = legDestination.getString("plannedTrack");
+
 
                                 String treintype = leg.getJSONObject("product").getString("categoryCode");
 
@@ -184,13 +185,24 @@ public class NsAPIHandler  implements Serializable
                                 {
                                     legTrainType = TreinType.INTERCITY_DIRECT;
                                 }
-                                allLegs.add(new TreinRit(legDestStationName, legTrainType, crowdness, startStation, endStation, legDeparture, legArrival, legDepTrack, legArrTrack, rideTime.toString()));
+
+                                if(cancelled)
+                                {
+                                    allLegs.add(new TreinRit(startStation, endStation, legDeparture, legArrival, rideTime.toString(), crowdness, legTrainType, legDestStationName));
+                                }
+                                else
+                                {
+                                    String legDepartureTrack = legOrigin.getString("plannedTrack");
+                                    String legArrivalTrack = legDestination.getString("plannedTrack");
+                                    allLegs.add(new TreinRit(legDestStationName, legTrainType, crowdness, startStation, endStation, legDeparture, legArrival, legDepartureTrack, legArrivalTrack, rideTime.toString()));
+                                }
+
 
                             }
-                                TreinReis rit = new TreinReis(depStation, destinationStation, duration, transfers, rideDeparture, null, departureTrack, destination);
-                                rit.setEersteTreinType(type);
-                                rit.setAankomsttijd(allLegs.get(allLegs.size()-1).getArrivalTime());
-                                rit.setLegs(allLegs);
+                            TreinReis rit = new TreinReis(depStation, destinationStation, duration, transfers, rideDeparture, null, departureTrack, destination);
+                            rit.setEersteTreinType(type);
+                            rit.setAankomsttijd(allLegs.get(allLegs.size()-1).getArrivalTime());
+                            rit.setLegs(allLegs);
 
                             ritten.add(rit);
                         }

@@ -17,7 +17,20 @@ public class TreinRit implements Serializable
     private String crowdness;       //--->"crowdForecast"
     private TreinType type;
     private String destination;
+    private boolean cancelled;
 
+    public TreinRit(String startStation, String endStation, TimeStamp departureTime, TimeStamp arrivalTime, String ritDuration, String crowdness, TreinType type, String destination)
+    {
+        this.startStation = startStation;
+        this.endStation = endStation;
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+        this.ritDuration = ritDuration;
+        this.crowdness = crowdness;
+        this.type = type;
+        this.destination = destination;
+        cancelled = true;
+    }
 
     public String getDestination()
     {
@@ -37,6 +50,7 @@ public class TreinRit implements Serializable
         this.arrivalTrack = arrivalTrack;
         this.ritDuration = ritDuration;
         this.crowdness = crowdness;
+        cancelled = false;
     }
 
     public String getStartStation()
