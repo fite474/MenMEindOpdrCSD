@@ -14,7 +14,7 @@
     <string name="tijdTotInfo">tijd tot station:</string>
     <string name="jaKnop">ja</string>
     <string name="neeKnop">nee</string>
-    <string name="teLaatBericht">het lijkt erop dat je de trein niet haalt</string>
+    <string name="teLaatBericht">"het lijkt erop dat je de trein niet haalt. "</string>
     <string name="teLaatBerichtTwee">wilt u een nieuwe reis kiezen?</string>
     <string name="geenOvereenkomst">Geen overeenkomstige stations.</string>
     <string name="voerStationIn">Voer eerst een station in</string>
