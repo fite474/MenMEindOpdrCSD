@@ -144,11 +144,11 @@ public class MapsActivity extends AppCompatActivity {
         int currentUsersTime = (currentTime.getHour() * 60) + currentTime.getMinute();
         requiredArivalTime = treinReis.getVertrektijd();
         int requiredTime = (requiredArivalTime.getHours() * 60) + requiredArivalTime.getMinutes();
-        int timeNeeded = (requiredTime - currentUsersTime) * 60;
+        int timeNeeded = (requiredTime - currentUsersTime);
         int red = Color.parseColor("#FF0000");
         int green = Color.parseColor("#228B22");
 
-        if(timeNeeded > seconds)
+        if((timeNeeded * 60) > seconds)
         {
             onTime = true;
             setActivityBackgroundColor(green);
@@ -163,10 +163,10 @@ public class MapsActivity extends AppCompatActivity {
         }
 
         int secondsforstring = seconds % 60;
-        int minutes = timeNeeded / 60;
+        //int minutes = timeNeeded / 60;
         int hours = 0;//durationTime / 3600;
 
-        TimeStamp time = new TimeStamp(minutes);
+        TimeStamp time = new TimeStamp(timeNeeded);
 
         tijdOverValue.setText(getString(R.string.tijdOverNog) + time + getString(R.string.uur));
     }
