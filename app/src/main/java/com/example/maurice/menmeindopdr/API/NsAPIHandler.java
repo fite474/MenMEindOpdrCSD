@@ -215,7 +215,7 @@ public class NsAPIHandler  implements Serializable
 
                     } catch (JSONException e)
                     {
-                        e.printStackTrace();
+                        listener.noJourneyAvailable();//e.printStackTrace();
                     }
 
                 },
